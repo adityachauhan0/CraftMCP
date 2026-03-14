@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9DEBA80B-09C4-4A1D-87F8-5C241D1C08FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftMCP.App", "src\CraftMCP.App\CraftMCP.App.csproj", "{A43DF6FA-3802-41D3-962A-14EB66DF4FA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftMCP.Domain", "src\CraftMCP.Domain\CraftMCP.Domain.csproj", "{1F827632-63E2-4A84-820A-840AAACD1916}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftMCP.Rendering", "src\CraftMCP.Rendering\CraftMCP.Rendering.csproj", "{35F9D72A-0DB8-4922-AFEC-9159DB1F8557}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftMCP.Persistence", "src\CraftMCP.Persistence\CraftMCP.Persistence.csproj", "{2F7E127B-B8EE-419C-A1BF-54E38B703979}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftMCP.Agent", "src\CraftMCP.Agent\CraftMCP.Agent.csproj", "{943417FE-D953-4B76-83E5-C779FB44A580}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BF8A8270-91D0-44FC-A678-61443523C312}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraftMCP.Tests", "tests\CraftMCP.Tests\CraftMCP.Tests.csproj", "{D96598FF-C0FD-4EDC-A62D-E645147AA3A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A43DF6FA-3802-41D3-962A-14EB66DF4FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A43DF6FA-3802-41D3-962A-14EB66DF4FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A43DF6FA-3802-41D3-962A-14EB66DF4FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A43DF6FA-3802-41D3-962A-14EB66DF4FA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F827632-63E2-4A84-820A-840AAACD1916}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F827632-63E2-4A84-820A-840AAACD1916}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F827632-63E2-4A84-820A-840AAACD1916}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F827632-63E2-4A84-820A-840AAACD1916}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35F9D72A-0DB8-4922-AFEC-9159DB1F8557}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35F9D72A-0DB8-4922-AFEC-9159DB1F8557}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35F9D72A-0DB8-4922-AFEC-9159DB1F8557}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35F9D72A-0DB8-4922-AFEC-9159DB1F8557}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F7E127B-B8EE-419C-A1BF-54E38B703979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F7E127B-B8EE-419C-A1BF-54E38B703979}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F7E127B-B8EE-419C-A1BF-54E38B703979}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F7E127B-B8EE-419C-A1BF-54E38B703979}.Release|Any CPU.Build.0 = Release|Any CPU
+		{943417FE-D953-4B76-83E5-C779FB44A580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{943417FE-D953-4B76-83E5-C779FB44A580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{943417FE-D953-4B76-83E5-C779FB44A580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{943417FE-D953-4B76-83E5-C779FB44A580}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D96598FF-C0FD-4EDC-A62D-E645147AA3A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D96598FF-C0FD-4EDC-A62D-E645147AA3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D96598FF-C0FD-4EDC-A62D-E645147AA3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D96598FF-C0FD-4EDC-A62D-E645147AA3A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A43DF6FA-3802-41D3-962A-14EB66DF4FA3} = {9DEBA80B-09C4-4A1D-87F8-5C241D1C08FD}
+		{1F827632-63E2-4A84-820A-840AAACD1916} = {9DEBA80B-09C4-4A1D-87F8-5C241D1C08FD}
+		{35F9D72A-0DB8-4922-AFEC-9159DB1F8557} = {9DEBA80B-09C4-4A1D-87F8-5C241D1C08FD}
+		{2F7E127B-B8EE-419C-A1BF-54E38B703979} = {9DEBA80B-09C4-4A1D-87F8-5C241D1C08FD}
+		{943417FE-D953-4B76-83E5-C779FB44A580} = {9DEBA80B-09C4-4A1D-87F8-5C241D1C08FD}
+		{D96598FF-C0FD-4EDC-A62D-E645147AA3A6} = {BF8A8270-91D0-44FC-A678-61443523C312}
+	EndGlobalSection
+EndGlobal

@@ -7,3 +7,6 @@ build/
 .env.*
 coverage/
 *.log
+bin/
+obj/
+.vs/

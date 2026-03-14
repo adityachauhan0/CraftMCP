@@ -1,0 +1,117 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignWidth="1440"
+        d:DesignHeight="900"
+        x:Class="CraftMCP.App.MainWindow"
+        Width="1440"
+        Height="900"
+        MinWidth="960"
+        MinHeight="640"
+        Title="CraftMCP">
+    <Grid RowDefinitions="Auto,*,180"
+          ColumnDefinitions="260,*,320"
+          Background="#111827">
+        <Border Grid.ColumnSpan="3"
+                Background="#0F172A"
+                BorderBrush="#1E293B"
+                BorderThickness="0,0,0,1"
+                Padding="20,14">
+            <TextBlock Text="CraftMCP"
+                       FontSize="20"
+                       FontWeight="SemiBold"
+                       Foreground="#F8FAFC" />
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="0"
+                Margin="16"
+                Padding="16"
+                Background="#1E293B"
+                CornerRadius="12">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Layers"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="#F8FAFC" />
+                <TextBlock Text="Hierarchy placeholder"
+                           Foreground="#CBD5E1" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,16,0,16"
+                Padding="24"
+                Background="#0F172A"
+                BorderBrush="#334155"
+                BorderThickness="1"
+                CornerRadius="16">
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="10">
+                <TextBlock Text="Canvas"
+                           HorizontalAlignment="Center"
+                           FontSize="24"
+                           FontWeight="SemiBold"
+                           Foreground="#F8FAFC" />
+                <TextBlock Text="Render surface placeholder"
+                           HorizontalAlignment="Center"
+                           Foreground="#CBD5E1" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="2"
+                Margin="16"
+                Padding="16"
+                Background="#1E293B"
+                CornerRadius="12">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Properties"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="#F8FAFC" />
+                <TextBlock Text="Inspector placeholder"
+                           Foreground="#CBD5E1" />
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="2"
+              Grid.ColumnSpan="3"
+              ColumnDefinitions="2*,*"
+              Margin="16,0,16,16">
+            <Border Grid.Column="0"
+                    Margin="0,0,8,0"
+                    Padding="16"
+                    Background="#1E293B"
+                    CornerRadius="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Prompt"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#F8FAFC" />
+                    <TextBlock Text="Prompt panel placeholder"
+                               Foreground="#CBD5E1" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1"
+                    Margin="8,0,0,0"
+                    Padding="16"
+                    Background="#1E293B"
+                    CornerRadius="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Activity Log"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#F8FAFC" />
+                    <TextBlock Text="History and warnings placeholder"
+                               Foreground="#CBD5E1" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
