@@ -16,4 +16,10 @@
     <ProjectReference Include="..\..\src\CraftMCP.Domain\CraftMCP.Domain.csproj" />
     <Using Include="Xunit" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Fixtures\json\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

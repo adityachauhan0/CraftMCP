@@ -1,0 +1,310 @@
+{
+  "schemaVersion": "v1",
+  "document": {
+    "id": "doc_slide_export",
+    "name": "Export Stability Slide",
+    "canvas": {
+      "width": 1600,
+      "height": 900,
+      "preset": "custom",
+      "background": {
+        "red": 18,
+        "green": 22,
+        "blue": 33,
+        "alpha": 255
+      },
+      "safeArea": {
+        "left": 80,
+        "top": 60,
+        "right": 80,
+        "bottom": 60
+      }
+    },
+    "rootNodeIds": [
+      "node_slide_accent",
+      "node_slide_title",
+      "node_slide_bullets",
+      "node_slide_footer_line"
+    ],
+    "nodes": [
+      {
+        "id": "node_slide_accent",
+        "type": "circle",
+        "name": "Accent Circle",
+        "transform": {
+          "x": 1240,
+          "y": 80,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 0.24
+        },
+        "size": {
+          "width": 260,
+          "height": 260
+        },
+        "fill": {
+          "red": 86,
+          "green": 166,
+          "blue": 255,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_slide_title",
+        "type": "text",
+        "name": "Slide Title",
+        "transform": {
+          "x": 120,
+          "y": 96,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Why deterministic export matters",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 760,
+          "height": 64
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 48,
+          "weight": 700,
+          "alignment": "start",
+          "lineHeight": 1,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 255,
+          "green": 255,
+          "blue": 255,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_slide_bullets",
+        "type": "group",
+        "name": "Bullet Group",
+        "transform": {
+          "x": 120,
+          "y": 220,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "childNodeIds": [
+          "node_slide_panel",
+          "node_slide_bullet_one",
+          "node_slide_bullet_two",
+          "node_slide_bullet_three"
+        ]
+      },
+      {
+        "id": "node_slide_panel",
+        "type": "rectangle",
+        "name": "Bullet Panel",
+        "transform": {
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_slide_bullets",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 0.88
+        },
+        "size": {
+          "width": 960,
+          "height": 420
+        },
+        "fill": {
+          "red": 33,
+          "green": 41,
+          "blue": 60,
+          "alpha": 255
+        },
+        "stroke": {
+          "color": {
+            "red": 86,
+            "green": 166,
+            "blue": 255,
+            "alpha": 255
+          },
+          "width": 2
+        },
+        "cornerRadius": 24
+      },
+      {
+        "id": "node_slide_bullet_one",
+        "type": "text",
+        "name": "Bullet One",
+        "transform": {
+          "x": 48,
+          "y": 48,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_slide_bullets",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "One scene graph drives editor, export, and agent context.",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 820,
+          "height": 48
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "weight": 500,
+          "alignment": "start",
+          "lineHeight": 1.25,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 235,
+          "green": 240,
+          "blue": 247,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_slide_bullet_two",
+        "type": "text",
+        "name": "Bullet Two",
+        "transform": {
+          "x": 48,
+          "y": 144,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_slide_bullets",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Stable ordering turns export changes into intentional diffs.",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 820,
+          "height": 48
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "weight": 500,
+          "alignment": "start",
+          "lineHeight": 1.25,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 235,
+          "green": 240,
+          "blue": 247,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_slide_bullet_three",
+        "type": "text",
+        "name": "Bullet Three",
+        "transform": {
+          "x": 48,
+          "y": 240,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_slide_bullets",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Transport-neutral commands keep human and agent edits aligned.",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 820,
+          "height": 48
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "weight": 500,
+          "alignment": "start",
+          "lineHeight": 1.25,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 235,
+          "green": 240,
+          "blue": 247,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_slide_footer_line",
+        "type": "line",
+        "name": "Footer Line",
+        "transform": {
+          "x": 120,
+          "y": 760,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1360,
+          "y": 0
+        },
+        "stroke": {
+          "color": {
+            "red": 86,
+            "green": 166,
+            "blue": 255,
+            "alpha": 255
+          },
+          "width": 3
+        }
+      }
+    ],
+    "assets": []
+  }
+}

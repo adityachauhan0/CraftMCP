@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "v1",
+  "document": {
+    "id": "doc_social_launch",
+    "name": "Social Launch",
+    "canvas": {
+      "width": 1080,
+      "height": 1080,
+      "preset": "square-post",
+      "background": {
+        "red": 245,
+        "green": 240,
+        "blue": 232,
+        "alpha": 255
+      }
+    },
+    "rootNodeIds": [
+      "node_social_background",
+      "node_social_hero_group"
+    ],
+    "nodes": [
+      {
+        "id": "node_social_background",
+        "type": "rectangle",
+        "name": "Background",
+        "transform": {
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "size": {
+          "width": 1080,
+          "height": 1080
+        },
+        "fill": {
+          "red": 245,
+          "green": 240,
+          "blue": 232,
+          "alpha": 255
+        },
+        "cornerRadius": 0
+      },
+      {
+        "id": "node_social_hero_group",
+        "type": "group",
+        "name": "Hero Group",
+        "transform": {
+          "x": 120,
+          "y": 120,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "childNodeIds": [
+          "node_social_hero_image",
+          "node_social_title",
+          "node_social_subtitle",
+          "node_social_cta_button",
+          "node_social_cta_label"
+        ]
+      },
+      {
+        "id": "node_social_hero_image",
+        "type": "image",
+        "name": "Hero Image",
+        "transform": {
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_social_hero_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 360,
+          "height": 360
+        },
+        "asset": {
+          "assetId": "asset_social_hero"
+        },
+        "fitMode": "cover",
+        "crop": {
+          "x": 40,
+          "y": 20,
+          "width": 280,
+          "height": 280
+        }
+      },
+      {
+        "id": "node_social_title",
+        "type": "text",
+        "name": "Headline",
+        "transform": {
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_social_hero_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Launch day, without the scramble.",
+        "bounds": {
+          "x": 400,
+          "y": 20,
+          "width": 440,
+          "height": 96
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 72,
+          "weight": 700,
+          "alignment": "start",
+          "lineHeight": 1,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 34,
+          "green": 34,
+          "blue": 34,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_social_subtitle",
+        "type": "text",
+        "name": "Subheadline",
+        "transform": {
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_social_hero_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Draft once, refine locally, export with full structure.",
+        "bounds": {
+          "x": 400,
+          "y": 144,
+          "width": 440,
+          "height": 112
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "weight": 400,
+          "alignment": "start",
+          "lineHeight": 1.3,
+          "letterSpacing": 0.2
+        },
+        "fill": {
+          "red": 84,
+          "green": 84,
+          "blue": 84,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_social_cta_button",
+        "type": "rectangle",
+        "name": "CTA Button",
+        "transform": {
+          "x": 400,
+          "y": 304,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_social_hero_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "size": {
+          "width": 240,
+          "height": 64
+        },
+        "fill": {
+          "red": 34,
+          "green": 34,
+          "blue": 34,
+          "alpha": 255
+        },
+        "cornerRadius": 12
+      },
+      {
+        "id": "node_social_cta_label",
+        "type": "text",
+        "name": "CTA Label",
+        "transform": {
+          "x": 436,
+          "y": 322,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_social_hero_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Export JSON",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 168,
+          "height": 28
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 24,
+          "weight": 600,
+          "alignment": "center",
+          "lineHeight": 1,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 255,
+          "green": 255,
+          "blue": 255,
+          "alpha": 255
+        }
+      }
+    ],
+    "assets": [
+      {
+        "id": "asset_social_hero",
+        "fileName": "social-hero.png",
+        "mediaType": "image/png",
+        "contentHash": "hash-social-hero"
+      }
+    ]
+  }
+}

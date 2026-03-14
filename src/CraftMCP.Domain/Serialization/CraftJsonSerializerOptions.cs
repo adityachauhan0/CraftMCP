@@ -8,6 +8,8 @@ public static class CraftJsonSerializerOptions
 {
     public static JsonSerializerOptions Default { get; } = CreateDefault();
 
+    public static JsonSerializerOptions Export { get; } = CreateExport();
+
     private static JsonSerializerOptions CreateDefault()
     {
         var options = new JsonSerializerOptions
@@ -19,6 +21,18 @@ public static class CraftJsonSerializerOptions
         };
 
         options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+        options.MakeReadOnly();
+        return options;
+    }
+
+    private static JsonSerializerOptions CreateExport()
+    {
+        var options = new JsonSerializerOptions(Default)
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            WriteIndented = true,
+        };
+
         options.MakeReadOnly();
         return options;
     }

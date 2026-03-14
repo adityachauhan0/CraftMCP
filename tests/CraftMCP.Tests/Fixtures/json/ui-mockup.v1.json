@@ -1,0 +1,380 @@
+{
+  "schemaVersion": "v1",
+  "document": {
+    "id": "doc_ui_profile",
+    "name": "UI Profile",
+    "canvas": {
+      "width": 1440,
+      "height": 900,
+      "preset": "desktop-frame",
+      "background": {
+        "red": 241,
+        "green": 245,
+        "blue": 249,
+        "alpha": 255
+      }
+    },
+    "rootNodeIds": [
+      "node_ui_phone_frame",
+      "node_ui_status",
+      "node_ui_title",
+      "node_ui_divider",
+      "node_ui_card_group"
+    ],
+    "nodes": [
+      {
+        "id": "node_ui_phone_frame",
+        "type": "rectangle",
+        "name": "Phone Frame",
+        "transform": {
+          "x": 523,
+          "y": 24,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "size": {
+          "width": 393,
+          "height": 852
+        },
+        "fill": {
+          "red": 255,
+          "green": 255,
+          "blue": 255,
+          "alpha": 255
+        },
+        "stroke": {
+          "color": {
+            "red": 212,
+            "green": 220,
+            "blue": 228,
+            "alpha": 255
+          },
+          "width": 2
+        },
+        "cornerRadius": 36
+      },
+      {
+        "id": "node_ui_status",
+        "type": "text",
+        "name": "Status",
+        "transform": {
+          "x": 560,
+          "y": 48,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "9:41",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 80,
+          "height": 24
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "weight": 600,
+          "alignment": "start",
+          "lineHeight": 1,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 28,
+          "green": 32,
+          "blue": 42,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_ui_title",
+        "type": "text",
+        "name": "Profile Title",
+        "transform": {
+          "x": 580,
+          "y": 116,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Profile overview",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 240,
+          "height": 36
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 30,
+          "weight": 700,
+          "alignment": "start",
+          "lineHeight": 1,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 28,
+          "green": 32,
+          "blue": 42,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_ui_divider",
+        "type": "line",
+        "name": "Divider",
+        "transform": {
+          "x": 580,
+          "y": 176,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 280,
+          "y": 0
+        },
+        "stroke": {
+          "color": {
+            "red": 220,
+            "green": 226,
+            "blue": 232,
+            "alpha": 255
+          },
+          "width": 1
+        }
+      },
+      {
+        "id": "node_ui_card_group",
+        "type": "group",
+        "name": "Profile Card",
+        "transform": {
+          "x": 560,
+          "y": 220,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "childNodeIds": [
+          "node_ui_avatar",
+          "node_ui_name",
+          "node_ui_role",
+          "node_ui_button",
+          "node_ui_button_label"
+        ]
+      },
+      {
+        "id": "node_ui_avatar",
+        "type": "image",
+        "name": "Avatar",
+        "transform": {
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_ui_card_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 120,
+          "height": 120
+        },
+        "asset": {
+          "assetId": "asset_ui_avatar"
+        },
+        "fitMode": "cover"
+      },
+      {
+        "id": "node_ui_name",
+        "type": "text",
+        "name": "Name",
+        "transform": {
+          "x": 152,
+          "y": 8,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_ui_card_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Avery Stone",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 180,
+          "height": 30
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 26,
+          "weight": 700,
+          "alignment": "start",
+          "lineHeight": 1,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 28,
+          "green": 32,
+          "blue": 42,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_ui_role",
+        "type": "text",
+        "name": "Role",
+        "transform": {
+          "x": 152,
+          "y": 48,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_ui_card_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Lead product designer",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 220,
+          "height": 24
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 18,
+          "weight": 400,
+          "alignment": "start",
+          "lineHeight": 1.2,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 106,
+          "green": 114,
+          "blue": 125,
+          "alpha": 255
+        }
+      },
+      {
+        "id": "node_ui_button",
+        "type": "rectangle",
+        "name": "Action Button",
+        "transform": {
+          "x": 152,
+          "y": 84,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_ui_card_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "size": {
+          "width": 160,
+          "height": 48
+        },
+        "fill": {
+          "red": 28,
+          "green": 32,
+          "blue": 42,
+          "alpha": 255
+        },
+        "cornerRadius": 14
+      },
+      {
+        "id": "node_ui_button_label",
+        "type": "text",
+        "name": "Action Label",
+        "transform": {
+          "x": 192,
+          "y": 96,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotationDegrees": 0
+        },
+        "parentId": "node_ui_card_group",
+        "isVisible": true,
+        "isLocked": false,
+        "opacity": {
+          "value": 1
+        },
+        "content": "Invite",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 80,
+          "height": 24
+        },
+        "typography": {
+          "fontFamily": "Inter",
+          "fontSize": 18,
+          "weight": 600,
+          "alignment": "center",
+          "lineHeight": 1,
+          "letterSpacing": 0
+        },
+        "fill": {
+          "red": 255,
+          "green": 255,
+          "blue": 255,
+          "alpha": 255
+        }
+      }
+    ],
+    "assets": [
+      {
+        "id": "asset_ui_avatar",
+        "fileName": "avatar.png",
+        "mediaType": "image/png",
+        "contentHash": "hash-ui-avatar"
+      }
+    ]
+  }
+}
