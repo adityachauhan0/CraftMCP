@@ -1,114 +1,153 @@
-![CraftMCP header](assets/cute_female_with_an_axe_rotations_8dir.gif)
+<p align="center">
+  <img src="assets/cute_female_with_an_axe_rotations_8dir.gif" alt="CraftMCP pixel mascot" width="72" />
+</p>
 
-# CraftMCP
+<h1 align="center">CraftMCP</h1>
 
-CraftMCP is an open-source Windows design workspace for human and AI collaboration.
+<p align="center">
+  Open-source Windows design tooling for humans and AI agents.
+</p>
 
-The project is focused on a simple idea: AI agents should be able to create and update designs locally, and human users should be able to inspect, edit, and export those same designs without leaving the workflow. CraftMCP is intentionally lightweight. It is not trying to become a full professional design suite.
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-Windows-2b7fff?style=flat-square" alt="Windows" />
+  <img src="https://img.shields.io/badge/runtime-.NET%208-512bd4?style=flat-square" alt=".NET 8" />
+  <img src="https://img.shields.io/badge/ui-Avalonia-f59e0b?style=flat-square" alt="Avalonia" />
+  <img src="https://img.shields.io/badge/status-active%20prototype-22c55e?style=flat-square" alt="Status" />
+</p>
 
-## What CraftMCP Is For
+CraftMCP is a lightweight local design workspace where AI agents can create and update designs, and human users can inspect, edit, and export those same designs without leaving the workflow.
 
-CraftMCP is being designed for workflows such as:
+The project is intentionally focused. It is not trying to become a full professional design suite. It is trying to become a practical open-source tool people can pair with their own AI models for visual design work.
 
-- creating social graphics from prompts,
-- generating UI mockups for apps,
-- making slide-style layouts,
-- reopening an existing design and refining it with an AI model,
-- exporting structured design data so another agent can continue the work.
+## Why CraftMCP
 
-## Product Direction
+Most design tools are optimized for direct human interaction, cloud collaboration, or very broad professional feature sets. That makes them awkward foundations for agent-driven workflows.
 
-The MVP is centered around a local single-canvas editor with:
+CraftMCP is built around a different set of constraints:
 
-- text, shape, image, and group primitives,
-- direct human editing of AI-generated output,
-- structured agent operations instead of brittle UI automation,
-- PNG export for rendered output,
-- deterministic JSON export for exact machine-readable design context.
+- one canonical scene model,
+- the same model for human edits and agent edits,
+- deterministic exports,
+- local-first file handling,
+- and clear boundaries between UI, domain, rendering, persistence, and agent integration.
 
-The project is Windows-first, local-first, and open-source by design.
+## Intended Use Cases
 
-## Why This Exists
+- Social graphics from prompts
+- UI mockups for desktop and mobile apps
+- Slide-style layouts and presentation visuals
+- Reopening an existing design and refining it with an AI model
+- Exporting structured design data so another agent can continue the work
 
-Most design software is built for direct human interaction, cloud collaboration, or broad professional feature depth. That is a poor fit for AI-driven visual workflows.
+## MVP Principles
 
-CraftMCP is aimed at a narrower but important problem: giving AI agents a reliable local design environment that still stays understandable and editable for humans. That requires:
+| Principle | Meaning |
+| --- | --- |
+| Human + AI collaboration | AI can generate and modify designs, but humans stay in control and can edit directly. |
+| Local-first | Core editing and export should not depend on cloud services. |
+| Deterministic output | JSON export is a product contract, not a debug dump. |
+| Lightweight scope | Useful open-source tooling matters more than feature breadth. |
+| Shared source of truth | `DocumentState` remains the canonical scene model across editing, persistence, and export. |
 
-- one clean scene model,
-- deterministic operations,
-- reversible edits,
-- local file handling,
-- and exports that preserve full structure instead of reducing everything to a screenshot.
+## Current Progress
 
-## Current Status
+The project has moved well beyond the concept stage.
 
-The project has moved past the idea stage.
+### Phase 1 completed
 
-Current progress includes:
+- .NET 8 solution scaffolded with explicit project boundaries
+- Avalonia desktop shell bootstrapped
+- Stable ID model added for documents, nodes, and assets
+- Core value objects and scene graph contracts implemented
+- `DocumentState`, `CanvasModel`, and hierarchy validation added
+- Initial test harness and domain tests landed
 
-- product definition and MVP scope,
-- architecture decisions for the first release,
-- an implementation plan and engineering backlog,
-- a .NET 8 solution with explicit project boundaries,
-- a bootstrapped Avalonia desktop shell,
-- foundational domain models for the scene graph,
-- validation logic for document integrity,
-- an initial automated test suite.
+### Phase 2 completed
 
-The current architecture baseline is:
+- v1 deterministic JSON export contract implemented
+- `DocumentJsonExporter` added as the export boundary
+- Fixture-based export tests added for social, UI, and slide documents
+- Byte-identical repeat export behavior verified
+- Transport-neutral command contracts added for the command layer
+- `DesignCommand`, `CommandBatch`, `CommandResult`, and `HistoryEntry` implemented
+- Initial typed command families defined for create, update, delete, reorder, grouping, canvas, asset import, duplication, visibility, and lock state
 
-- app shell: Avalonia + .NET 8,
-- source of truth: one canonical `DocumentState`,
-- editing model: the same scene model supports human edits and agent edits,
-- persistence direction: `.craft` package with bundled assets,
-- export rule: deterministic JSON is a release gate.
+### Latest verification
 
-## Repository Structure
+- `dotnet test tests/CraftMCP.Tests/CraftMCP.Tests.csproj` -> 29 passed, 0 failed
+- `dotnet build CraftMCP.sln` -> 0 warnings, 0 errors
 
-The repository is currently organized around clear boundaries:
+## Current Architecture Baseline
 
-- `src/CraftMCP.App` for the Avalonia shell,
-- `src/CraftMCP.Domain` for IDs, value objects, scene models, and validation,
-- `src/CraftMCP.Rendering` for rendering and export-facing composition,
-- `src/CraftMCP.Persistence` for `.craft` packaging and hydration,
-- `src/CraftMCP.Agent` for the agent integration boundary,
-- `tests/CraftMCP.Tests` for domain and integration coverage,
-- `docs/engineering-conventions.md` for repository conventions.
+| Area | Current direction |
+| --- | --- |
+| App shell | Avalonia + .NET 8 |
+| Source of truth | Canonical `DocumentState` |
+| Editing model | Same scene model for human edits and agent edits |
+| Persistence | Native `.craft` package with bundled assets |
+| JSON export | Deterministic top-level artifact envelope |
+| Agent model | Internal prompt-driven command engine in MVP |
 
-## What Makes CraftMCP Different
+## Repository Layout
 
-CraftMCP is intentionally constrained.
+```text
+src/
+  CraftMCP.App          Avalonia shell
+  CraftMCP.Domain       IDs, value objects, scene graph, validation, exports, commands
+  CraftMCP.Rendering    Rendering and export-facing composition
+  CraftMCP.Persistence  .craft packaging and document hydration
+  CraftMCP.Agent        Agent integration boundary
+tests/
+  CraftMCP.Tests        Domain, export, and command contract coverage
+docs/
+  engineering-conventions.md
+```
 
-It is not trying to be:
+## What Exists Today
+
+Today the repo already contains:
+
+- a working desktop shell,
+- foundational scene graph and document models,
+- deterministic JSON export infrastructure,
+- command-layer contracts for future execution and history behavior,
+- test fixtures and automated coverage for the core domain.
+
+What does not exist yet is the full command execution pipeline, undo/redo semantics, and the user-facing editing experience on top of those contracts.
+
+## Near-Term Roadmap
+
+The next major implementation work is centered on command execution:
+
+1. command validation pipeline,
+2. transactional command execution,
+3. inverse generation and history behavior,
+4. undo and redo flows,
+5. continued rendering and persistence integration around the stable scene model.
+
+## What CraftMCP Is Not
+
+CraftMCP is not trying to be:
 
 - a Figma replacement,
 - a full vector illustration suite,
 - a cloud-first collaboration platform,
-- or a product packed with every design feature under the sun.
+- or an everything-in-one design product.
 
-The goal is to be a practical open-source tool people can pair with their own AI models while still keeping direct human control over the final design.
-
-## Near-Term Roadmap
-
-The next implementation wave is focused on:
-
-1. finalizing the v1 JSON export contract,
-2. adding deterministic JSON fixture coverage,
-3. defining command contracts for edits,
-4. extending persistence, rendering, and agent execution around the shared scene model.
+The scope stays intentionally narrow so the core human-plus-agent workflow can be strong.
 
 ## Contributing
 
-Contributions are welcome as the project moves through the core implementation phases.
-
-High-value areas include:
+Contributions are welcome, especially in areas such as:
 
 - scene graph and document model design,
 - deterministic JSON serialization,
-- command schema and command execution,
-- rendering and export consistency,
+- command schema and execution,
+- rendering/export consistency,
 - Windows-first UX,
 - local asset and package handling.
+
+See [docs/engineering-conventions.md](docs/engineering-conventions.md) for current repository conventions.
 
 ## Vision
 
