@@ -112,6 +112,12 @@ public partial class MainWindow : Window
 
     private void OnApplySelectionClick(object? sender, RoutedEventArgs e) => ViewModel.ApplySelectionProperties();
 
+    private void OnSubmitPromptClick(object? sender, RoutedEventArgs e) => ViewModel.SubmitPrompt();
+
+    private void OnApproveProposalClick(object? sender, RoutedEventArgs e) => ViewModel.ApproveProposal();
+
+    private void OnRejectProposalClick(object? sender, RoutedEventArgs e) => ViewModel.RejectProposal();
+
     private async Task SaveAsAsync()
     {
         var path = await PickSavePathAsync($"{ViewModel.Document.Name}.craft", "Craft document", ["*.craft"]);

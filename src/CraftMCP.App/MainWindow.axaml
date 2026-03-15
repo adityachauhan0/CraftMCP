@@ -243,13 +243,48 @@
                                FontSize="18"
                                FontWeight="SemiBold"
                                Foreground="#F8FAFC" />
-                    <TextBlock Text="Internal agent proposal flow is intentionally deferred in this phase. The shell keeps the prompt surface visible but inactive."
+                    <TextBlock Text="Submit a prompt to create a reviewable proposal. Approval is always explicit before any agent batch can mutate the document."
                                TextWrapping="Wrap"
                                Foreground="#CBD5E1" />
                     <TextBox AcceptsReturn="True"
-                             Height="120"
-                             IsEnabled="False"
-                             Watermark="Agent workflow begins in a later phase." />
+                             Height="88"
+                             Text="{Binding PromptText}"
+                             Watermark="Describe the change you want the planner to propose." />
+                    <Button Content="Plan Proposal"
+                            IsEnabled="{Binding CanSubmitPrompt}"
+                            Click="OnSubmitPromptClick" />
+                    <Border Padding="12"
+                            Background="#0F172A"
+                            CornerRadius="10">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="{Binding ProposalStatusText}"
+                                       Foreground="#CBD5E1" />
+                            <TextBlock Text="{Binding ProposalSummaryText}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding ProposalRationaleText}"
+                                       IsVisible="{Binding HasProposalRationale}"
+                                       TextWrapping="Wrap"
+                                       Foreground="#CBD5E1" />
+                            <TextBlock Text="{Binding ProposalCommandPreviewText}"
+                                       IsVisible="{Binding HasProposal}"
+                                       TextWrapping="Wrap"
+                                       Foreground="#E2E8F0" />
+                            <TextBlock Text="{Binding ProposalIssueText}"
+                                       IsVisible="{Binding HasProposalIssues}"
+                                       TextWrapping="Wrap"
+                                       Foreground="#FBBF24" />
+                            <WrapPanel>
+                                <Button Margin="0,0,8,8"
+                                        Content="Approve"
+                                        IsEnabled="{Binding CanApproveProposal}"
+                                        Click="OnApproveProposalClick" />
+                                <Button Margin="0,0,8,8"
+                                        Content="Reject"
+                                        IsEnabled="{Binding CanRejectProposal}"
+                                        Click="OnRejectProposalClick" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Border>
 
@@ -272,6 +307,18 @@
                                             Background="#0F172A"
                                             CornerRadius="10">
                                         <StackPanel Spacing="4">
+                                            <StackPanel Orientation="Horizontal"
+                                                        Spacing="8">
+                                                <TextBlock Text="{Binding TimestampLabel}"
+                                                           Foreground="#94A3B8"
+                                                           FontSize="11" />
+                                                <TextBlock Text="{Binding SourceLabel}"
+                                                           Foreground="#94A3B8"
+                                                           FontSize="11" />
+                                                <TextBlock Text="{Binding Actor}"
+                                                           Foreground="#94A3B8"
+                                                           FontSize="11" />
+                                            </StackPanel>
                                             <TextBlock Text="{Binding Summary}"
                                                        FontWeight="SemiBold" />
                                             <TextBlock Text="{Binding Detail}"

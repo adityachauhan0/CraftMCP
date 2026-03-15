@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
+using CraftMCP.Agent;
 using CraftMCP.App.Infrastructure;
 using CraftMCP.App.Models;
 using CraftMCP.App.Models.Session;
@@ -23,6 +24,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
 
     private readonly WorkspaceDocumentService _documentService;
     private readonly WorkspaceCommandDispatcher _commandDispatcher;
+    private readonly WorkspaceAgentService _agentService;
     private readonly WorkspaceRenderer _renderer;
     private readonly DocumentHitTester _hitTester;
     private readonly NodeFactory _nodeFactory;
@@ -63,7 +65,9 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
     private string _startYText = string.Empty;
     private string _endXText = string.Empty;
     private string _endYText = string.Empty;
+    private string _promptText = string.Empty;
     private bool _isDirty;
+    private PlannerOutput? _currentProposal;
     private PackagedAssetContent? _pendingImageAsset;
     private WorkspaceInteractionMode _interactionMode;
     private CanvasHandleKind _activeHandle;
@@ -81,7 +85,8 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             new WorkspaceCommandDispatcher(),
             new WorkspaceRenderer(),
             new DocumentHitTester(),
-            new NodeFactory())
+            new NodeFactory(),
+            new WorkspaceAgentService())
     {
     }
 
@@ -90,10 +95,12 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         WorkspaceCommandDispatcher commandDispatcher,
         WorkspaceRenderer renderer,
         DocumentHitTester hitTester,
-        NodeFactory nodeFactory)
+        NodeFactory nodeFactory,
+        WorkspaceAgentService agentService)
     {
         _documentService = documentService;
         _commandDispatcher = commandDispatcher;
+        _agentService = agentService;
         _renderer = renderer;
         _hitTester = hitTester;
         _nodeFactory = nodeFactory;
@@ -114,6 +121,8 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
     public ObservableCollection<WorkspaceActivityEntry> ActivityEntries => _activityEntries;
 
     public WorkspaceSessionState SessionState => _sessionState;
+
+    public PlannerOutput? CurrentProposal => _currentProposal;
 
     public DocumentState Document => _document;
 
@@ -223,6 +232,51 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
 
     public string EndYText { get => _endYText; set => SetProperty(ref _endYText, value); }
 
+    public string PromptText
+    {
+        get => _promptText;
+        set
+        {
+            if (SetProperty(ref _promptText, value))
+            {
+                OnPropertyChanged(nameof(CanSubmitPrompt));
+            }
+        }
+    }
+
+    public bool CanSubmitPrompt => !string.IsNullOrWhiteSpace(PromptText);
+
+    public bool HasProposal => _currentProposal is not null;
+
+    public bool CanApproveProposal => _currentProposal?.CanApprove ?? false;
+
+    public bool CanRejectProposal => _currentProposal is not null;
+
+    public bool HasProposalRationale => !string.IsNullOrWhiteSpace(_currentProposal?.Rationale);
+
+    public bool HasProposalIssues => _currentProposal is { Warnings.Count: > 0 } || _currentProposal is { Errors.Count: > 0 };
+
+    public string ProposalStatusText => _currentProposal is null ? "No pending proposal." : _currentProposal.Status.ToString();
+
+    public string ProposalSummaryText => _currentProposal?.Summary ?? "Submit a prompt to review a proposal.";
+
+    public string ProposalRationaleText => _currentProposal?.Rationale ?? string.Empty;
+
+    public string ProposalCommandPreviewText =>
+        _currentProposal?.Batch is null
+            ? string.Empty
+            : string.Join(
+                Environment.NewLine,
+                _currentProposal.Batch.Commands.Select((command, index) => $"{index + 1}. {DescribeCommand(command)}"));
+
+    public string ProposalIssueText =>
+        _currentProposal is null
+            ? string.Empty
+            : string.Join(
+                Environment.NewLine,
+                _currentProposal.Errors.Select(error => $"Error: {error.Message}")
+                    .Concat(_currentProposal.Warnings.Select(warning => $"Warning: {warning.Message}")));
+
     private NodeBase? SelectedNode =>
         HasSingleSelection && _document.Nodes.TryGetValue(_sessionState.Selection.PrimaryNodeId!.Value, out var node)
             ? node
@@ -287,6 +341,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         _pendingImageAsset = null;
         _interactionMode = WorkspaceInteractionMode.None;
         SetSessionState(WorkspaceSessionState.Default);
+        SetCurrentProposal(null);
         AddActivity("Created new document.", WorkspaceActivitySeverity.Info, preset.DisplayName);
         StatusMessage = $"Started a new {preset.DisplayName.ToLowerInvariant()} document.";
         EnsureViewportInitialized(force: true);
@@ -304,6 +359,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         _previewDocument = null;
         _pendingImageAsset = null;
         SetSessionState(WorkspaceSessionState.Default);
+        SetCurrentProposal(null);
         StatusMessage = $"Opened '{Path.GetFileName(path)}'.";
         AddActivity("Opened document.", WorkspaceActivitySeverity.Info, snapshot.Path);
 
@@ -355,6 +411,52 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
     {
         var dispatch = _commandDispatcher.Redo(_document, _history);
         HandleDispatch(dispatch, "Redo applied.", false);
+    }
+
+    public void SubmitPrompt()
+    {
+        var proposal = _agentService.CreateProposal(_document, _sessionState.Selection, PromptText);
+        SetCurrentProposal(proposal);
+
+        StatusMessage = proposal.CanApprove
+            ? "Proposal ready for review."
+            : proposal.Errors.FirstOrDefault()?.Message ?? "Proposal requires review.";
+
+        AddActivity(
+            proposal.CanApprove ? "Agent proposal ready." : "Agent proposal issue.",
+            proposal.CanApprove ? WorkspaceActivitySeverity.Info : WorkspaceActivitySeverity.Warning,
+            proposal.Summary,
+            "Agent",
+            proposal.Batch?.Provenance.Actor ?? "planner:local");
+    }
+
+    public void ApproveProposal()
+    {
+        if (_currentProposal?.Batch is null || !_currentProposal.CanApprove)
+        {
+            return;
+        }
+
+        var dispatch = _commandDispatcher.Commit(_document, _history, _currentProposal.Batch);
+        HandleDispatch(dispatch, "Approved agent proposal.", true);
+    }
+
+    public void RejectProposal()
+    {
+        if (_currentProposal is null)
+        {
+            return;
+        }
+
+        AddActivity(
+            "Rejected agent proposal.",
+            WorkspaceActivitySeverity.Info,
+            _currentProposal.Summary,
+            "Agent",
+            _currentProposal.Batch?.Provenance.Actor ?? "planner:local");
+
+        SetCurrentProposal(null);
+        StatusMessage = "Proposal rejected.";
     }
 
     public void ToggleVisibility(string nodeIdText)
@@ -1119,17 +1221,29 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         _document = dispatch.Document;
         _history = dispatch.History;
         _previewDocument = null;
+        SetCurrentProposal(null);
         if (markDirty)
         {
             _isDirty = true;
         }
 
         StatusMessage = successMessage;
-        AddActivity("Applied command batch.", WorkspaceActivitySeverity.Info, dispatch.HistoryEntry?.Batch.Summary ?? successMessage);
+        var provenance = dispatch.HistoryEntry?.Batch.Provenance;
+        AddActivity(
+            provenance?.Source == CommandSource.Agent ? "Applied agent proposal." : "Applied command batch.",
+            WorkspaceActivitySeverity.Info,
+            dispatch.HistoryEntry?.Batch.Summary ?? successMessage,
+            GetSourceLabel(provenance?.Source ?? CommandSource.System),
+            provenance?.Actor);
 
         foreach (var warning in dispatch.Result.Warnings)
         {
-            AddActivity("Command warning.", WorkspaceActivitySeverity.Warning, warning.Message);
+            AddActivity(
+                "Command warning.",
+                WorkspaceActivitySeverity.Warning,
+                warning.Message,
+                GetSourceLabel(provenance?.Source ?? CommandSource.System),
+                provenance?.Actor);
         }
 
         OnPropertiesChanged(nameof(IsDirty), nameof(DocumentTitle), nameof(CanUndo), nameof(CanRedo));
@@ -1375,7 +1489,58 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
     }
 
     private void AddActivity(string summary, WorkspaceActivitySeverity severity, string? detail = null) =>
-        _activityEntries.Insert(0, new WorkspaceActivityEntry(DateTimeOffset.UtcNow, summary, severity, detail));
+        AddActivity(summary, severity, detail, "System");
+
+    private void AddActivity(
+        string summary,
+        WorkspaceActivitySeverity severity,
+        string? detail,
+        string sourceLabel,
+        string? actor = null) =>
+        _activityEntries.Insert(0, new WorkspaceActivityEntry(DateTimeOffset.UtcNow, summary, severity, detail, sourceLabel, actor));
+
+    private void SetCurrentProposal(PlannerOutput? proposal)
+    {
+        _currentProposal = proposal;
+        OnPropertiesChanged(
+            nameof(CurrentProposal),
+            nameof(HasProposal),
+            nameof(CanApproveProposal),
+            nameof(CanRejectProposal),
+            nameof(HasProposalRationale),
+            nameof(HasProposalIssues),
+            nameof(ProposalStatusText),
+            nameof(ProposalSummaryText),
+            nameof(ProposalRationaleText),
+            nameof(ProposalCommandPreviewText),
+            nameof(ProposalIssueText));
+    }
+
+    private static string GetSourceLabel(CommandSource source) =>
+        source switch
+        {
+            CommandSource.Human => "Human",
+            CommandSource.Agent => "Agent",
+            _ => "System",
+        };
+
+    private static string DescribeCommand(DesignCommand command) =>
+        command switch
+        {
+            CreateNodeCommand createNode => $"Create {createNode.Node.Kind} '{createNode.Node.Name}'.",
+            UpdateNodeCommand updateNode => $"Update {updateNode.Node.Kind} '{updateNode.Node.Name}'.",
+            DeleteNodeCommand deleteNode => $"Delete node '{deleteNode.NodeId.Value}'.",
+            ReorderNodeCommand reorderNode => $"Reorder node '{reorderNode.NodeId.Value}'.",
+            GroupNodesCommand groupNodes => $"Group nodes into '{groupNodes.Group.Name}'.",
+            UngroupNodeCommand ungroupNode => $"Ungroup '{ungroupNode.GroupId.Value}'.",
+            SetCanvasCommand => "Update canvas settings.",
+            ImportAssetCommand importAsset => $"Import asset '{importAsset.Asset.FileName}'.",
+            RemoveAssetCommand removeAsset => $"Remove asset '{removeAsset.AssetId.Value}'.",
+            DuplicateNodeCommand duplicateNode => $"Duplicate node '{duplicateNode.SourceNodeId.Value}'.",
+            SetVisibilityCommand setVisibility => $"Set visibility for '{setVisibility.NodeId.Value}' to {(setVisibility.IsVisible ? "visible" : "hidden")}.",
+            SetLockStateCommand setLockState => $"Set lock state for '{setLockState.NodeId.Value}' to {(setLockState.IsLocked ? "locked" : "unlocked")}.",
+            _ => command.Kind.ToString(),
+        };
 
     private static int IndexOfNodeId(IReadOnlyList<NodeId> nodeIds, NodeId nodeId)
     {

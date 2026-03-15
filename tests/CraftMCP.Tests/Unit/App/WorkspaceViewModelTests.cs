@@ -1,9 +1,11 @@
+using CraftMCP.Agent;
 using Avalonia;
 using Avalonia.Input;
 using CraftMCP.App.Models;
 using CraftMCP.App.Models.Session;
 using CraftMCP.App.Services;
 using CraftMCP.App.ViewModels;
+using CraftMCP.Domain.Commands;
 using CraftMCP.Domain.Nodes;
 using CraftMCP.Domain.ValueObjects;
 using CraftMCP.Persistence.Contracts;
@@ -64,13 +66,81 @@ public sealed class WorkspaceViewModelTests
         Assert.Equal(createdNode.Id, viewModel.SessionState.Selection.PrimaryNodeId);
     }
 
-    private static WorkspaceViewModel CreateViewModel() =>
+    [Fact]
+    public void SubmitPrompt_CreatesProposalWithoutMutatingDocument()
+    {
+        using var viewModel = CreateViewModel(new ReviewPlanner());
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+        viewModel.SelectTool(ToolMode.CreateRectangle);
+        viewModel.OnCanvasPointerPressed(new Point(200, 200), KeyModifiers.None, false);
+        viewModel.OnCanvasPointerReleased(new Point(340, 320));
+        var node = Assert.Single(viewModel.Document.Nodes.Values);
+        var wasDirty = viewModel.IsDirty;
+        var couldUndo = viewModel.CanUndo;
+
+        viewModel.PromptText = "Hide the selected node.";
+
+        viewModel.SubmitPrompt();
+
+        Assert.NotNull(viewModel.CurrentProposal);
+        Assert.Equal(PlannerOutputStatus.Ready, viewModel.CurrentProposal.Status);
+        Assert.True(viewModel.Document.Nodes[node.Id].IsVisible);
+        Assert.Equal(wasDirty, viewModel.IsDirty);
+        Assert.Equal(couldUndo, viewModel.CanUndo);
+    }
+
+    [Fact]
+    public void RejectProposal_ClearsPendingReviewWithoutMutatingDocument()
+    {
+        using var viewModel = CreateViewModel(new ReviewPlanner());
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+        viewModel.SelectTool(ToolMode.CreateRectangle);
+        viewModel.OnCanvasPointerPressed(new Point(200, 200), KeyModifiers.None, false);
+        viewModel.OnCanvasPointerReleased(new Point(340, 320));
+        var node = Assert.Single(viewModel.Document.Nodes.Values);
+        var wasDirty = viewModel.IsDirty;
+        var couldUndo = viewModel.CanUndo;
+        viewModel.PromptText = "Hide the selected node.";
+        viewModel.SubmitPrompt();
+
+        viewModel.RejectProposal();
+
+        Assert.Null(viewModel.CurrentProposal);
+        Assert.True(viewModel.Document.Nodes[node.Id].IsVisible);
+        Assert.Equal(wasDirty, viewModel.IsDirty);
+        Assert.Equal(couldUndo, viewModel.CanUndo);
+    }
+
+    [Fact]
+    public void ApproveProposal_AppliesAgentBatchThroughHistoryAndActivityLog()
+    {
+        using var viewModel = CreateViewModel(new ReviewPlanner());
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+        viewModel.SelectTool(ToolMode.CreateRectangle);
+        viewModel.OnCanvasPointerPressed(new Point(200, 200), KeyModifiers.None, false);
+        viewModel.OnCanvasPointerReleased(new Point(340, 320));
+        var node = Assert.Single(viewModel.Document.Nodes.Values);
+        viewModel.PromptText = "Hide the selected node.";
+        viewModel.SubmitPrompt();
+
+        viewModel.ApproveProposal();
+
+        Assert.Null(viewModel.CurrentProposal);
+        Assert.False(viewModel.Document.Nodes[node.Id].IsVisible);
+        Assert.True(viewModel.IsDirty);
+        Assert.True(viewModel.CanUndo);
+        Assert.Equal("Agent", viewModel.ActivityEntries[0].SourceLabel);
+        Assert.Equal("planner:test", viewModel.ActivityEntries[0].Actor);
+    }
+
+    private static WorkspaceViewModel CreateViewModel(IInternalPlanner? planner = null) =>
         new(
             new WorkspaceDocumentService(),
             new WorkspaceCommandDispatcher(),
             new TestWorkspaceRenderer(),
             new DocumentHitTester(),
-            new NodeFactory());
+            new NodeFactory(),
+            new WorkspaceAgentService(planner ?? new ReviewPlanner()));
 
     private sealed class TestWorkspaceRenderer : WorkspaceRenderer
     {
@@ -83,6 +153,28 @@ public sealed class WorkspaceViewModelTests
             bool showSafeAreaGuides)
         {
             return new WorkspaceRenderSnapshot(_planBuilder.Build(document), null, Array.Empty<string>());
+        }
+    }
+
+    private sealed class ReviewPlanner : IInternalPlanner
+    {
+        public PlannerOutput Plan(SceneContext context)
+        {
+            var selectedNodeId = Assert.Single(context.Selection.SelectedNodeIds);
+            var batch = new CommandBatch(
+                "Hide selected node",
+                [new SetVisibilityCommand(selectedNodeId, false)],
+                new CommandProvenance(CommandSource.Agent, "planner:test", "proposal_review"),
+                "Hide the currently selected node after human approval.");
+
+            return new PlannerOutput(
+                "proposal_review",
+                PlannerOutputStatus.Ready,
+                "Hide selected node",
+                "Hide the currently selected node after human approval.",
+                batch,
+                Array.Empty<CommandWarning>(),
+                Array.Empty<CommandFailure>());
         }
     }
 }

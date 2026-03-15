@@ -23,6 +23,18 @@ public sealed class WorkspaceCommandDispatcher
             new CommandProvenance(CommandSource.Human, actor, detail: detail),
             null);
 
+        return Commit(document, history, batch);
+    }
+
+    public WorkspaceCommandDispatchResult Commit(
+        DocumentState document,
+        CommandHistoryStack history,
+        CommandBatch batch)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+        ArgumentNullException.ThrowIfNull(history);
+        ArgumentNullException.ThrowIfNull(batch);
+
         var outcome = history.Commit(document, batch);
         return new WorkspaceCommandDispatchResult(
             outcome.Document,

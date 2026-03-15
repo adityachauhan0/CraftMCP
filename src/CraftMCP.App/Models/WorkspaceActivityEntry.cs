@@ -4,7 +4,12 @@ public sealed record WorkspaceActivityEntry(
     DateTimeOffset TimestampUtc,
     string Summary,
     WorkspaceActivitySeverity Severity,
-    string? Detail = null);
+    string? Detail = null,
+    string SourceLabel = "System",
+    string? Actor = null)
+{
+    public string TimestampLabel => TimestampUtc.ToLocalTime().ToString("HH:mm:ss");
+}
 
 public enum WorkspaceActivitySeverity
 {

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/cute_female_with_an_axe_rotations_8dir.gif" alt="CraftMCP pixel mascot" width="72" />
+  <img src="assets/cute_female_with_an_axe_rotations_8dir.gif" alt="CraftMCP pixel mascot" width="104" />
 </p>
 
 <h1 align="center">CraftMCP</h1>
@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/platform-Windows-2b7fff?style=flat-square" alt="Windows" />
   <img src="https://img.shields.io/badge/runtime-.NET%208-512bd4?style=flat-square" alt=".NET 8" />
   <img src="https://img.shields.io/badge/ui-Avalonia-f59e0b?style=flat-square" alt="Avalonia" />
-  <img src="https://img.shields.io/badge/status-active%20prototype-22c55e?style=flat-square" alt="Status" />
+  <img src="https://img.shields.io/badge/status-phase%207%20integration-f97316?style=flat-square" alt="Status" />
 </p>
 
 CraftMCP is a lightweight local design workspace where AI agents can create and update designs, and human users can inspect, edit, and export those same designs without leaving the workflow.
@@ -53,7 +53,7 @@ CraftMCP is built around a different set of constraints:
 
 The project has moved well beyond the concept stage.
 
-### Phase 1 completed
+### Verified foundation
 
 - .NET 8 solution scaffolded with explicit project boundaries
 - Avalonia desktop shell bootstrapped
@@ -62,7 +62,7 @@ The project has moved well beyond the concept stage.
 - `DocumentState`, `CanvasModel`, and hierarchy validation added
 - Initial test harness and domain tests landed
 
-### Phase 2 completed
+### Verified product core
 
 - v1 deterministic JSON export contract implemented
 - `DocumentJsonExporter` added as the export boundary
@@ -72,9 +72,22 @@ The project has moved well beyond the concept stage.
 - `DesignCommand`, `CommandBatch`, `CommandResult`, and `HistoryEntry` implemented
 - Initial typed command families defined for create, update, delete, reorder, grouping, canvas, asset import, duplication, visibility, and lock state
 
-### Latest verification
+### Verified editor shell
 
-- `dotnet test tests/CraftMCP.Tests/CraftMCP.Tests.csproj` -> 29 passed, 0 failed
+- Preset-based new document flow implemented
+- Open, save, save as, PNG export, and JSON export wired into the shell
+- Layer panel, property panel, canvas hit testing, zoom, pan, and direct manipulation added
+- Human edits route through the shared command engine and history stack
+
+### Latest implementation direction
+
+- The most recent implementation notes describe phase 7 work on the internal agent proposal loop
+- That work adds scene-context building, planner contracts, proposal review, approval, rejection, and activity-log provenance
+- The current local workspace is in active integration and the latest manual UI review note was blocked by a build failure in the dirty working tree
+
+### Last clean verification recorded in the knowledge base
+
+- `dotnet test tests/CraftMCP.Tests/CraftMCP.Tests.csproj` -> 66 passed, 0 failed
 - `dotnet build CraftMCP.sln` -> 0 warnings, 0 errors
 
 ## Current Architecture Baseline
@@ -111,9 +124,10 @@ Today the repo already contains:
 - foundational scene graph and document models,
 - deterministic JSON export infrastructure,
 - command-layer contracts for future execution and history behavior,
+- command-backed human editing flows in the workspace shell,
 - test fixtures and automated coverage for the core domain.
 
-What does not exist yet is the full command execution pipeline, undo/redo semantics, and the user-facing editing experience on top of those contracts.
+What is still actively being integrated is the review-first internal agent workflow on top of that editor foundation. The knowledge base shows that work as underway, but the latest local UI review was blocked until the workspace returns to a clean, buildable state.
 
 ## Near-Term Roadmap
 
@@ -123,7 +137,8 @@ The next major implementation work is centered on command execution:
 2. transactional command execution,
 3. inverse generation and history behavior,
 4. undo and redo flows,
-5. continued rendering and persistence integration around the stable scene model.
+5. finishing and stabilizing the review-first internal agent workflow,
+6. continued rendering and persistence integration around the stable scene model.
 
 ## What CraftMCP Is Not
 
