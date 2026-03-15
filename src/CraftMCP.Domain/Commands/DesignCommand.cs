@@ -14,6 +14,7 @@ namespace CraftMCP.Domain.Commands;
 [JsonDerivedType(typeof(UngroupNodeCommand), "ungroupNode")]
 [JsonDerivedType(typeof(SetCanvasCommand), "setCanvas")]
 [JsonDerivedType(typeof(ImportAssetCommand), "importAsset")]
+[JsonDerivedType(typeof(RemoveAssetCommand), "removeAsset")]
 [JsonDerivedType(typeof(DuplicateNodeCommand), "duplicateNode")]
 [JsonDerivedType(typeof(SetVisibilityCommand), "setVisibility")]
 [JsonDerivedType(typeof(SetLockStateCommand), "setLockState")]
@@ -63,6 +64,11 @@ public sealed record ImportAssetCommand(AssetManifestEntry Asset) : DesignComman
     public override CommandKind Kind => CommandKind.ImportAsset;
 }
 
+public sealed record RemoveAssetCommand(AssetId AssetId) : DesignCommand
+{
+    public override CommandKind Kind => CommandKind.RemoveAsset;
+}
+
 public sealed record DuplicateNodeCommand(NodeId SourceNodeId, NodeBase Duplicate, int InsertIndex) : DesignCommand
 {
     public override CommandKind Kind => CommandKind.DuplicateNode;
@@ -88,6 +94,7 @@ public enum CommandKind
     UngroupNode,
     SetCanvas,
     ImportAsset,
+    RemoveAsset,
     DuplicateNode,
     SetVisibility,
     SetLockState,
