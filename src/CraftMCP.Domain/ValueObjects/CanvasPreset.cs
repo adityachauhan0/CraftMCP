@@ -22,7 +22,11 @@ public readonly record struct CanvasPreset
 
     public static CanvasPreset SquarePost => new("square-post");
 
+    public static CanvasPreset Slide => new("slide");
+
     public static CanvasPreset DesktopFrame => new("desktop-frame");
+
+    public static CanvasPreset MobileFrame => new("mobile-frame");
 
     public override string ToString() => Value;
 

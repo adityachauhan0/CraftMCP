@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\CraftMCP.App\CraftMCP.App.csproj" />
     <ProjectReference Include="..\..\src\CraftMCP.Domain\CraftMCP.Domain.csproj" />
     <ProjectReference Include="..\..\src\CraftMCP.Persistence\CraftMCP.Persistence.csproj" />
     <ProjectReference Include="..\..\src\CraftMCP.Rendering\CraftMCP.Rendering.csproj" />

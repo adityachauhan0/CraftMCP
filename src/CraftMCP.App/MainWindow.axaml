@@ -2,81 +2,231 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:CraftMCP.App.Controls"
+        xmlns:vm="using:CraftMCP.App.ViewModels"
         mc:Ignorable="d"
         d:DesignWidth="1440"
         d:DesignHeight="900"
         x:Class="CraftMCP.App.MainWindow"
+        x:CompileBindings="False"
         Width="1440"
         Height="900"
-        MinWidth="960"
-        MinHeight="640"
-        Title="CraftMCP">
-    <Grid RowDefinitions="Auto,*,180"
-          ColumnDefinitions="260,*,320"
-          Background="#111827">
+        MinWidth="1120"
+        MinHeight="720"
+        Title="{Binding DocumentTitle}">
+    <Grid RowDefinitions="Auto,*,220"
+          ColumnDefinitions="320,*,340"
+          Background="#0F172A">
         <Border Grid.ColumnSpan="3"
-                Background="#0F172A"
+                Padding="16"
+                Background="#111827"
                 BorderBrush="#1E293B"
-                BorderThickness="0,0,0,1"
-                Padding="20,14">
-            <TextBlock Text="CraftMCP"
-                       FontSize="20"
-                       FontWeight="SemiBold"
-                       Foreground="#F8FAFC" />
+                BorderThickness="0,0,0,1">
+            <StackPanel Spacing="12">
+                <TextBlock Text="CraftMCP"
+                           FontSize="22"
+                           FontWeight="SemiBold"
+                           Foreground="#F8FAFC" />
+                <WrapPanel>
+                    <Button Margin="0,0,8,8" Content="New" Click="OnNewClick" />
+                    <Button Margin="0,0,8,8" Content="Open" Click="OnOpenClick" />
+                    <Button Margin="0,0,8,8" Content="Save" Click="OnSaveClick" />
+                    <Button Margin="0,0,8,8" Content="Save As" Click="OnSaveAsClick" />
+                    <Button Margin="0,0,8,8" Content="Export PNG" Click="OnExportPngClick" />
+                    <Button Margin="0,0,8,8" Content="Export JSON" Click="OnExportJsonClick" />
+                    <Button Margin="0,0,8,8" Content="Undo" Click="OnUndoClick" />
+                    <Button Margin="0,0,8,8" Content="Redo" Click="OnRedoClick" />
+                    <Button Margin="0,0,8,8" Content="Select" Tag="Select" Click="OnToolClick" />
+                    <Button Margin="0,0,8,8" Content="Pan" Tag="Pan" Click="OnToolClick" />
+                    <Button Margin="0,0,8,8" Content="Rect" Tag="CreateRectangle" Click="OnToolClick" />
+                    <Button Margin="0,0,8,8" Content="Circle" Tag="CreateCircle" Click="OnToolClick" />
+                    <Button Margin="0,0,8,8" Content="Line" Tag="CreateLine" Click="OnToolClick" />
+                    <Button Margin="0,0,8,8" Content="Text" Tag="CreateText" Click="OnToolClick" />
+                    <Button Margin="0,0,8,8" Content="Image" Click="OnImageToolClick" />
+                    <Button Margin="0,0,8,8" Content="Duplicate" Click="OnDuplicateSelectionClick" />
+                    <Button Margin="0,0,8,8" Content="Delete" Click="OnDeleteSelectionClick" />
+                    <Button Margin="0,0,8,8" Content="Group" Click="OnGroupSelectionClick" />
+                    <Button Margin="0,0,8,8" Content="Ungroup" Click="OnUngroupSelectionClick" />
+                </WrapPanel>
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="#CBD5E1" />
+            </StackPanel>
         </Border>
 
         <Border Grid.Row="1"
                 Grid.Column="0"
                 Margin="16"
                 Padding="16"
-                Background="#1E293B"
-                CornerRadius="12">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Layers"
-                           FontSize="18"
-                           FontWeight="SemiBold"
-                           Foreground="#F8FAFC" />
-                <TextBlock Text="Hierarchy placeholder"
-                           Foreground="#CBD5E1" />
-            </StackPanel>
+                Background="#111827"
+                CornerRadius="14">
+            <ScrollViewer>
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Layers"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#F8FAFC" />
+                    <ItemsControl ItemsSource="{Binding LayerItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="8"
+                                        Margin="{Binding Indent}"
+                                        Background="#0F172A"
+                                        CornerRadius="10">
+                                    <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto"
+                                          ColumnSpacing="8">
+                                        <Button Grid.Column="0"
+                                                HorizontalContentAlignment="Left"
+                                                Tag="{Binding NodeIdText}"
+                                                Click="OnLayerSelectClick">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}" />
+                                                <TextBlock Text="{Binding KindLabel}"
+                                                           FontSize="11"
+                                                           Foreground="#94A3B8" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Grid.Column="1"
+                                                Content="V"
+                                                Tag="{Binding NodeIdText}"
+                                                Click="OnLayerVisibilityClick" />
+                                        <Button Grid.Column="2"
+                                                Content="L"
+                                                Tag="{Binding NodeIdText}"
+                                                Click="OnLayerLockClick" />
+                                        <Button Grid.Column="3"
+                                                Content="↑"
+                                                IsEnabled="{Binding CanMoveUp}"
+                                                Tag="{Binding NodeIdText}"
+                                                Click="OnLayerMoveUpClick" />
+                                        <Button Grid.Column="4"
+                                                Content="↓"
+                                                IsEnabled="{Binding CanMoveDown}"
+                                                Tag="{Binding NodeIdText}"
+                                                Click="OnLayerMoveDownClick" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <Border Grid.Row="1"
                 Grid.Column="1"
                 Margin="0,16,0,16"
-                Padding="24"
-                Background="#0F172A"
-                BorderBrush="#334155"
-                BorderThickness="1"
+                Padding="16"
+                Background="#111827"
                 CornerRadius="16">
-            <StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Spacing="10">
-                <TextBlock Text="Canvas"
-                           HorizontalAlignment="Center"
-                           FontSize="24"
-                           FontWeight="SemiBold"
-                           Foreground="#F8FAFC" />
-                <TextBlock Text="Render surface placeholder"
-                           HorizontalAlignment="Center"
-                           Foreground="#CBD5E1" />
-            </StackPanel>
+            <Grid RowDefinitions="Auto,*">
+                <TextBlock Text="{Binding RenderWarningsText}"
+                           Foreground="#FBBF24"
+                           Margin="0,0,0,8" />
+                <controls:WorkspaceCanvasControl Grid.Row="1" />
+            </Grid>
         </Border>
 
         <Border Grid.Row="1"
                 Grid.Column="2"
                 Margin="16"
                 Padding="16"
-                Background="#1E293B"
-                CornerRadius="12">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Properties"
-                           FontSize="18"
-                           FontWeight="SemiBold"
-                           Foreground="#F8FAFC" />
-                <TextBlock Text="Inspector placeholder"
-                           Foreground="#CBD5E1" />
-            </StackPanel>
+                Background="#111827"
+                CornerRadius="14">
+            <ScrollViewer>
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Properties"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#F8FAFC" />
+                    <TextBlock Text="{Binding SelectionSummaryText}"
+                               Foreground="#CBD5E1" />
+
+                    <StackPanel IsVisible="{Binding ShowCanvasEditor}"
+                                Spacing="8">
+                        <TextBlock Text="Canvas" FontWeight="SemiBold" />
+                        <TextBox Watermark="Width" Text="{Binding CanvasWidthText}" />
+                        <TextBox Watermark="Height" Text="{Binding CanvasHeightText}" />
+                        <TextBox Watermark="#RRGGBB" Text="{Binding CanvasBackgroundText}" />
+                        <Button Content="Apply Canvas"
+                                Click="OnApplyCanvasClick" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding ShowSingleNodeEditor}"
+                                Spacing="8">
+                        <TextBlock Text="Selection" FontWeight="SemiBold" />
+                        <TextBox Watermark="Name" Text="{Binding NameText}" />
+                        <Grid ColumnDefinitions="*,*"
+                              ColumnSpacing="8">
+                            <TextBox Grid.Column="0" Watermark="X" Text="{Binding XText}" />
+                            <TextBox Grid.Column="1" Watermark="Y" Text="{Binding YText}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,*"
+                              ColumnSpacing="8">
+                            <TextBox Grid.Column="0" Watermark="Rotation" Text="{Binding RotationText}" />
+                            <TextBox Grid.Column="1" Watermark="Opacity" Text="{Binding OpacityText}" />
+                        </Grid>
+
+                        <StackPanel IsVisible="{Binding ShowShapeEditor}" Spacing="8">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <TextBox Grid.Column="0" Watermark="Width" Text="{Binding WidthText}" />
+                                <TextBox Grid.Column="1" Watermark="Height" Text="{Binding HeightText}" />
+                            </Grid>
+                            <TextBox Watermark="Fill #RRGGBB" Text="{Binding FillText}" />
+                            <TextBox Watermark="Stroke #RRGGBB" Text="{Binding StrokeText}" />
+                            <TextBox Watermark="Stroke width" Text="{Binding StrokeWidthText}" />
+                            <TextBox Watermark="Corner radius" Text="{Binding CornerRadiusText}" />
+                        </StackPanel>
+
+                        <StackPanel IsVisible="{Binding ShowTextEditor}" Spacing="8">
+                            <TextBox AcceptsReturn="True"
+                                     Height="80"
+                                     Text="{Binding TextContent}" />
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <TextBox Grid.Column="0" Watermark="Width" Text="{Binding WidthText}" />
+                                <TextBox Grid.Column="1" Watermark="Height" Text="{Binding HeightText}" />
+                            </Grid>
+                            <TextBox Watermark="Fill #RRGGBB" Text="{Binding FillText}" />
+                            <TextBox Watermark="Font family" Text="{Binding FontFamilyText}" />
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <TextBox Grid.Column="0" Watermark="Font size" Text="{Binding FontSizeText}" />
+                                <TextBox Grid.Column="1" Watermark="Weight" Text="{Binding FontWeightText}" />
+                            </Grid>
+                            <TextBox Watermark="Alignment" Text="{Binding AlignmentText}" />
+                        </StackPanel>
+
+                        <StackPanel IsVisible="{Binding ShowImageEditor}" Spacing="8">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <TextBox Grid.Column="0" Watermark="Width" Text="{Binding WidthText}" />
+                                <TextBox Grid.Column="1" Watermark="Height" Text="{Binding HeightText}" />
+                            </Grid>
+                            <TextBox Watermark="Fit mode" Text="{Binding FitModeText}" />
+                        </StackPanel>
+
+                        <StackPanel IsVisible="{Binding ShowLineEditor}" Spacing="8">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <TextBox Grid.Column="0" Watermark="Start X" Text="{Binding StartXText}" />
+                                <TextBox Grid.Column="1" Watermark="Start Y" Text="{Binding StartYText}" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <TextBox Grid.Column="0" Watermark="End X" Text="{Binding EndXText}" />
+                                <TextBox Grid.Column="1" Watermark="End Y" Text="{Binding EndYText}" />
+                            </Grid>
+                            <TextBox Watermark="Stroke #RRGGBB" Text="{Binding StrokeText}" />
+                            <TextBox Watermark="Stroke width" Text="{Binding StrokeWidthText}" />
+                        </StackPanel>
+
+                        <Button Content="Apply Selection"
+                                Click="OnApplySelectionClick" />
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding ShowMultiSelectionEditor}"
+                                Spacing="8">
+                        <TextBlock Text="Multi-select edits stay command-backed. Use toolbar actions for group, duplicate, and delete." 
+                                   TextWrapping="Wrap"
+                                   Foreground="#CBD5E1" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <Grid Grid.Row="2"
@@ -86,30 +236,53 @@
             <Border Grid.Column="0"
                     Margin="0,0,8,0"
                     Padding="16"
-                    Background="#1E293B"
-                    CornerRadius="12">
+                    Background="#111827"
+                    CornerRadius="14">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Prompt"
                                FontSize="18"
                                FontWeight="SemiBold"
                                Foreground="#F8FAFC" />
-                    <TextBlock Text="Prompt panel placeholder"
+                    <TextBlock Text="Internal agent proposal flow is intentionally deferred in this phase. The shell keeps the prompt surface visible but inactive."
+                               TextWrapping="Wrap"
                                Foreground="#CBD5E1" />
+                    <TextBox AcceptsReturn="True"
+                             Height="120"
+                             IsEnabled="False"
+                             Watermark="Agent workflow begins in a later phase." />
                 </StackPanel>
             </Border>
 
             <Border Grid.Column="1"
                     Margin="8,0,0,0"
                     Padding="16"
-                    Background="#1E293B"
-                    CornerRadius="12">
+                    Background="#111827"
+                    CornerRadius="14">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Activity Log"
                                FontSize="18"
                                FontWeight="SemiBold"
                                Foreground="#F8FAFC" />
-                    <TextBlock Text="History and warnings placeholder"
-                               Foreground="#CBD5E1" />
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding ActivityEntries}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8"
+                                            Padding="10"
+                                            Background="#0F172A"
+                                            CornerRadius="10">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Text="{Binding Summary}"
+                                                       FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding Detail}"
+                                                       TextWrapping="Wrap"
+                                                       Foreground="#CBD5E1" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
                 </StackPanel>
             </Border>
         </Grid>
