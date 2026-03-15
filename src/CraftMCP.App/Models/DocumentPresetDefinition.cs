@@ -51,4 +51,6 @@ public sealed record DocumentPresetDefinition(
                 720,
                 new ColorValue(255, 255, 255)),
         };
+
+    public override string ToString() => DisplayName;
 }

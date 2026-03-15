@@ -342,6 +342,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         _interactionMode = WorkspaceInteractionMode.None;
         SetSessionState(WorkspaceSessionState.Default);
         SetCurrentProposal(null);
+        ResetActivityEntries();
         AddActivity("Created new document.", WorkspaceActivitySeverity.Info, preset.DisplayName);
         StatusMessage = $"Started a new {preset.DisplayName.ToLowerInvariant()} document.";
         EnsureViewportInitialized(force: true);
@@ -360,6 +361,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         _pendingImageAsset = null;
         SetSessionState(WorkspaceSessionState.Default);
         SetCurrentProposal(null);
+        ResetActivityEntries();
         StatusMessage = $"Opened '{Path.GetFileName(path)}'.";
         AddActivity("Opened document.", WorkspaceActivitySeverity.Info, snapshot.Path);
 
@@ -1498,6 +1500,8 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         string sourceLabel,
         string? actor = null) =>
         _activityEntries.Insert(0, new WorkspaceActivityEntry(DateTimeOffset.UtcNow, summary, severity, detail, sourceLabel, actor));
+
+    private void ResetActivityEntries() => _activityEntries.Clear();
 
     private void SetCurrentProposal(PlannerOutput? proposal)
     {

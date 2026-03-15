@@ -3,11 +3,14 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using CraftMCP.App.ViewModels;
+using System.ComponentModel;
 
 namespace CraftMCP.App.Controls;
 
-public sealed class WorkspaceCanvasControl : Control
+public class WorkspaceCanvasControl : Control
 {
+    private WorkspaceViewModel? _subscribedViewModel;
+
     private WorkspaceViewModel? ViewModel => DataContext as WorkspaceViewModel;
 
     public WorkspaceCanvasControl()
@@ -36,7 +39,8 @@ public sealed class WorkspaceCanvasControl : Control
     protected override void OnDataContextChanged(EventArgs e)
     {
         base.OnDataContextChanged(e);
-        InvalidateVisual();
+        SubscribeToViewModel(ViewModel);
+        InvalidateCanvasVisual();
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -87,6 +91,31 @@ public sealed class WorkspaceCanvasControl : Control
     {
         base.OnSizeChanged(e);
         ViewModel?.SetSurfaceSize(e.NewSize);
-        InvalidateVisual();
+        InvalidateCanvasVisual();
+    }
+
+    protected virtual void InvalidateCanvasVisual() => InvalidateVisual();
+
+    private void SubscribeToViewModel(WorkspaceViewModel? viewModel)
+    {
+        if (_subscribedViewModel is not null)
+        {
+            _subscribedViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        }
+
+        _subscribedViewModel = viewModel;
+
+        if (_subscribedViewModel is not null)
+        {
+            _subscribedViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        }
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == nameof(WorkspaceViewModel.CanvasBitmap))
+        {
+            InvalidateCanvasVisual();
+        }
     }
 }

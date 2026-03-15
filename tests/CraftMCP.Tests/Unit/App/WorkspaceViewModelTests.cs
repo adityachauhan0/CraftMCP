@@ -32,6 +32,23 @@ public sealed class WorkspaceViewModelTests
     }
 
     [Fact]
+    public void CreateNewDocument_ClearsPreviousActivityEntries()
+    {
+        using var viewModel = CreateViewModel();
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+        viewModel.SelectTool(ToolMode.CreateRectangle);
+        viewModel.OnCanvasPointerPressed(new Point(200, 200), KeyModifiers.None, false);
+        viewModel.OnCanvasPointerReleased(new Point(340, 320));
+
+        var preset = DocumentPresetDefinition.BuiltIn.Single(definition => definition.Preset == CanvasPreset.Slide);
+        viewModel.CreateNewDocument(preset, "Deck");
+
+        var entry = Assert.Single(viewModel.ActivityEntries);
+        Assert.Equal("Created new document.", entry.Summary);
+        Assert.Equal("Presentation Slide", entry.Detail);
+    }
+
+    [Fact]
     public void ApplyCanvasProperties_UpdatesDocumentThroughHistory()
     {
         using var viewModel = CreateViewModel();
