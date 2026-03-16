@@ -49,6 +49,25 @@ public sealed class WorkspaceViewModelTests
     }
 
     [Fact]
+    public void CreateNewDocument_ClearsStaleDirtyMarkerFromDocumentTitle()
+    {
+        using var viewModel = CreateViewModel();
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+        viewModel.CanvasBackgroundText = "#101820";
+
+        viewModel.ApplyCanvasProperties();
+
+        Assert.Contains('*', viewModel.DocumentTitle);
+
+        var preset = DocumentPresetDefinition.BuiltIn.Single(definition => definition.Preset == CanvasPreset.SquarePost);
+        viewModel.CreateNewDocument(preset, "Fresh Social");
+
+        Assert.False(viewModel.IsDirty);
+        Assert.Equal("Fresh Social", viewModel.DocumentTitle);
+        Assert.DoesNotContain('*', viewModel.DocumentTitle);
+    }
+
+    [Fact]
     public void ApplyCanvasProperties_UpdatesDocumentThroughHistory()
     {
         using var viewModel = CreateViewModel();
