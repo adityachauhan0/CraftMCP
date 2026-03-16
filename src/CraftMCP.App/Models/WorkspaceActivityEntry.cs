@@ -9,6 +9,20 @@ public sealed record WorkspaceActivityEntry(
     string? Actor = null)
 {
     public string TimestampLabel => TimestampUtc.ToLocalTime().ToString("HH:mm:ss");
+
+    public string SeverityLabel => Severity switch
+    {
+        WorkspaceActivitySeverity.Warning => "Warning",
+        WorkspaceActivitySeverity.Error => "Error",
+        _ => "Info",
+    };
+
+    public string MetaLabel =>
+        string.IsNullOrWhiteSpace(Actor)
+            ? SourceLabel
+            : $"{SourceLabel} | {Actor}";
+
+    public string DetailText => string.IsNullOrWhiteSpace(Detail) ? "No additional detail." : Detail;
 }
 
 public enum WorkspaceActivitySeverity

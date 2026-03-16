@@ -184,6 +184,38 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
 
     public string ActiveToolText => _sessionState.ToolMode.ToString();
 
+    public string WorkspaceContextText =>
+        _documentPath is null
+            ? "Unsaved local workspace"
+            : Path.GetFileName(_documentPath);
+
+    public string WorkspaceStateText =>
+        HasProposal
+            ? "Proposal in review"
+            : _isDirty
+                ? "Unsaved changes"
+                : "Ready";
+
+    public string PromptScopeText =>
+        HasMultipleSelection
+            ? $"{_sessionState.Selection.SelectedNodeIds.Count} selected nodes"
+            : HasSingleSelection
+                ? $"Selected layer: {SelectedNode?.Name ?? "Current selection"}"
+                : "Entire document";
+
+    public string PromptExpectationText => "Prompt -> proposal -> review -> apply";
+
+    public string PlannerSurfaceText => "Local planner only";
+
+    public string McpSurfaceText => "External MCP execution is not wired in this MVP.";
+
+    public string AgentContextSummaryText =>
+        _currentProposal is null
+            ? "Manual edits remain available while agent review stays explicit."
+            : _currentProposal.CanApprove
+                ? "This proposal can be approved or rejected before any mutation is applied."
+                : "This proposal needs revision before it can be applied.";
+
     public string CanvasWidthText { get => _canvasWidthText; set => SetProperty(ref _canvasWidthText, value); }
 
     public string CanvasHeightText { get => _canvasHeightText; set => SetProperty(ref _canvasHeightText, value); }
@@ -345,6 +377,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         ResetActivityEntries();
         AddActivity("Created new document.", WorkspaceActivitySeverity.Info, preset.DisplayName);
         StatusMessage = $"Started a new {preset.DisplayName.ToLowerInvariant()} document.";
+        OnPropertiesChanged(nameof(DocumentTitle), nameof(IsDirty), nameof(WorkspaceContextText), nameof(WorkspaceStateText));
         EnsureViewportInitialized(force: true);
         RefreshAll();
     }
@@ -370,6 +403,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             AddActivity("Package warning.", WorkspaceActivitySeverity.Warning, warning);
         }
 
+        OnPropertiesChanged(nameof(DocumentTitle), nameof(IsDirty), nameof(WorkspaceContextText), nameof(WorkspaceStateText));
         EnsureViewportInitialized(force: true);
         RefreshAll();
     }
@@ -382,6 +416,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         StatusMessage = $"Saved '{Path.GetFileName(path)}'.";
         AddActivity("Saved document.", WorkspaceActivitySeverity.Info, _documentPath);
         OnPropertiesChanged(nameof(IsDirty), nameof(DocumentTitle));
+        OnPropertiesChanged(nameof(WorkspaceContextText), nameof(WorkspaceStateText));
     }
 
     public void ExportJson(string path)
@@ -1249,6 +1284,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         }
 
         OnPropertiesChanged(nameof(IsDirty), nameof(DocumentTitle), nameof(CanUndo), nameof(CanRedo));
+        OnPropertiesChanged(nameof(WorkspaceStateText));
         RefreshAll();
     }
 
@@ -1405,7 +1441,9 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             nameof(ShowLineEditor),
             nameof(ShowGroupEditor),
             nameof(SelectionSummaryText),
-            nameof(ActiveToolText));
+            nameof(ActiveToolText),
+            nameof(PromptScopeText),
+            nameof(AgentContextSummaryText));
     }
 
     private void RefreshCanvas()
@@ -1460,7 +1498,13 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
     {
         _sessionState = sessionState;
         OnPropertyChanged(nameof(SessionState));
-        OnPropertiesChanged(nameof(HasSelection), nameof(HasSingleSelection), nameof(HasMultipleSelection), nameof(ActiveToolText));
+        OnPropertiesChanged(
+            nameof(HasSelection),
+            nameof(HasSingleSelection),
+            nameof(HasMultipleSelection),
+            nameof(ActiveToolText),
+            nameof(PromptScopeText),
+            nameof(AgentContextSummaryText));
     }
 
     private IReadOnlyList<NodeId> GetSiblingIds(NodeId? parentId) =>
@@ -1517,7 +1561,9 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             nameof(ProposalSummaryText),
             nameof(ProposalRationaleText),
             nameof(ProposalCommandPreviewText),
-            nameof(ProposalIssueText));
+            nameof(ProposalIssueText),
+            nameof(WorkspaceStateText),
+            nameof(AgentContextSummaryText));
     }
 
     private static string GetSourceLabel(CommandSource source) =>
