@@ -169,11 +169,33 @@ public sealed class WorkspaceViewModelTests
         Assert.Equal("planner:test", viewModel.ActivityEntries[0].Actor);
     }
 
-    private static WorkspaceViewModel CreateViewModel(IInternalPlanner? planner = null) =>
+    [Fact]
+    public void RenderWarnings_AreCollapsedWhenNoWarningsExist()
+    {
+        using var viewModel = CreateViewModel();
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+
+        Assert.False(viewModel.HasRenderWarnings);
+        Assert.Equal(string.Empty, viewModel.RenderWarningsText);
+    }
+
+    [Fact]
+    public void RenderWarnings_AreVisibleWhenWarningsExist()
+    {
+        using var viewModel = CreateViewModel(renderer: new WarningWorkspaceRenderer("Missing font fallback."));
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+
+        Assert.True(viewModel.HasRenderWarnings);
+        Assert.Equal("Missing font fallback.", viewModel.RenderWarningsText);
+    }
+
+    private static WorkspaceViewModel CreateViewModel(
+        IInternalPlanner? planner = null,
+        WorkspaceRenderer? renderer = null) =>
         new(
             new WorkspaceDocumentService(),
             new WorkspaceCommandDispatcher(),
-            new TestWorkspaceRenderer(),
+            renderer ?? new TestWorkspaceRenderer(),
             new DocumentHitTester(),
             new NodeFactory(),
             new WorkspaceAgentService(planner ?? new ReviewPlanner()));
@@ -211,6 +233,20 @@ public sealed class WorkspaceViewModelTests
                 batch,
                 Array.Empty<CommandWarning>(),
                 Array.Empty<CommandFailure>());
+        }
+    }
+
+    private sealed class WarningWorkspaceRenderer(string warning) : WorkspaceRenderer
+    {
+        private readonly DocumentRenderPlanBuilder _planBuilder = new();
+
+        public override WorkspaceRenderSnapshot Render(
+            CraftMCP.Domain.Models.DocumentState document,
+            IReadOnlyDictionary<CraftMCP.Domain.Ids.AssetId, PackagedAssetContent> assets,
+            IReadOnlyCollection<CraftMCP.Domain.Ids.NodeId> selectedNodeIds,
+            bool showSafeAreaGuides)
+        {
+            return new WorkspaceRenderSnapshot(_planBuilder.Build(document), null, [warning]);
         }
     }
 }

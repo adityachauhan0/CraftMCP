@@ -9,103 +9,104 @@
         d:DesignHeight="900"
         x:Class="CraftMCP.App.MainWindow"
         x:CompileBindings="False"
-        Width="1440"
-        Height="900"
-        MinWidth="1120"
-        MinHeight="720"
+        Width="1360"
+        Height="840"
+        MinWidth="1080"
+        MinHeight="700"
+        WindowStartupLocation="CenterScreen"
         Title="{Binding DocumentTitle}">
     <Grid Background="#120F0D"
           RowDefinitions="Auto,*">
         <Border Grid.Row="0"
-                Margin="18,18,18,0"
-                Padding="20,18"
+                Margin="14,14,14,0"
+                Padding="16,14"
                 Background="#CC211A16"
                 BorderBrush="#26F0C898"
                 BorderThickness="1"
-                CornerRadius="28">
-            <StackPanel Spacing="16">
+                CornerRadius="24">
+            <StackPanel Spacing="12">
                 <Grid ColumnDefinitions="Auto,*,Auto"
-                      ColumnSpacing="18">
+                      ColumnSpacing="14">
                     <StackPanel Orientation="Horizontal"
-                                Spacing="14">
-                        <Border Width="42"
-                                Height="42"
+                                Spacing="12">
+                        <Border Width="38"
+                                Height="38"
                                 Background="#F0C898"
-                                CornerRadius="14">
+                                CornerRadius="12">
                             <TextBlock HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
                                        Text="C"
-                                       FontSize="20"
+                                       FontSize="18"
                                        FontWeight="Bold"
                                        Foreground="#1A130F" />
                         </Border>
                         <StackPanel Spacing="2">
                             <TextBlock Text="CraftMCP"
-                                       FontSize="22"
+                                       FontSize="20"
                                        FontWeight="SemiBold"
                                        Foreground="#F6EFE7" />
                             <TextBlock Text="Agent-native creative workstation"
                                        Foreground="#B8A99A"
-                                       FontSize="12" />
+                                       FontSize="11" />
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Grid.Column="1"
                                 VerticalAlignment="Center"
-                                Spacing="6">
+                                Spacing="4">
                         <TextBlock Text="{Binding DocumentTitle}"
-                                   FontSize="16"
+                                   FontSize="15"
                                    FontWeight="SemiBold"
                                    Foreground="#F6EFE7" />
                         <WrapPanel>
                             <Border Margin="0,0,8,8"
-                                    Padding="12,8"
+                                    Padding="10,6"
                                     Background="#291F1A"
                                     BorderBrush="#19FFFFFF"
                                     BorderThickness="1"
                                     CornerRadius="999">
                                 <TextBlock Text="{Binding WorkspaceContextText}"
                                            Foreground="#E8DDD3"
-                                           FontSize="12" />
+                                           FontSize="11" />
                             </Border>
                             <Border Margin="0,0,8,8"
-                                    Padding="12,8"
+                                    Padding="10,6"
                                     Background="#1D1714"
                                     BorderBrush="#19FFFFFF"
                                     BorderThickness="1"
                                     CornerRadius="999">
                                 <TextBlock Text="{Binding WorkspaceStateText}"
                                            Foreground="#F0C898"
-                                           FontSize="12" />
+                                           FontSize="11" />
                             </Border>
                             <Border Margin="0,0,8,8"
-                                    Padding="12,8"
+                                    Padding="10,6"
                                     Background="#162132"
                                     BorderBrush="#332D9BF0"
                                     BorderThickness="1"
                                     CornerRadius="999">
                                 <TextBlock Text="Review-first mutation model"
                                            Foreground="#9AC5FF"
-                                           FontSize="12" />
+                                           FontSize="11" />
                             </Border>
                         </WrapPanel>
                     </StackPanel>
                     <StackPanel Grid.Column="2"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Spacing="6">
+                                Spacing="4">
                         <TextBlock Text="Workspace status"
                                    Foreground="#B8A99A"
                                    FontSize="11" />
                         <TextBlock Text="{Binding StatusMessage}"
-                                   MaxWidth="320"
+                                   MaxWidth="280"
                                    TextWrapping="Wrap"
                                    Foreground="#F6EFE7"
-                                   FontSize="13" />
+                                   FontSize="12" />
                     </StackPanel>
                 </Grid>
-                <Grid ColumnDefinitions="Auto,Auto,Auto,*"
-                      ColumnSpacing="12">
-                    <Border Padding="10,8"
+                <WrapPanel Orientation="Horizontal">
+                    <Border Margin="0,0,10,10"
+                            Padding="10,8"
                             Background="#1B1512"
                             BorderBrush="#19FFFFFF"
                             BorderThickness="1"
@@ -118,7 +119,7 @@
                             <Button Content="Save As" Click="OnSaveAsClick" />
                         </StackPanel>
                     </Border>
-                    <Border Grid.Column="1"
+                    <Border Margin="0,0,10,10"
                             Padding="10,8"
                             Background="#1B1512"
                             BorderBrush="#19FFFFFF"
@@ -130,7 +131,7 @@
                             <Button Content="Export JSON" Click="OnExportJsonClick" />
                         </StackPanel>
                     </Border>
-                    <Border Grid.Column="2"
+                    <Border Margin="0,0,10,10"
                             Padding="10,8"
                             Background="#1B1512"
                             BorderBrush="#19FFFFFF"
@@ -146,8 +147,10 @@
                                     Click="OnRedoClick" />
                         </StackPanel>
                     </Border>
-                    <Border Grid.Column="3"
-                            Padding="14,10"
+                    <Border MinWidth="220"
+                            MaxWidth="360"
+                            Margin="0,0,10,10"
+                            Padding="12,9"
                             Background="#17120F"
                             BorderBrush="#19FFFFFF"
                             BorderThickness="1"
@@ -157,24 +160,24 @@
                                    Foreground="#B8A99A"
                                    FontSize="12" />
                     </Border>
-                </Grid>
+                </WrapPanel>
             </StackPanel>
         </Border>
         <Grid Grid.Row="1"
-              Margin="18"
-              ColumnDefinitions="340,*,380"
-              ColumnSpacing="18">
+              Margin="14"
+              ColumnDefinitions="300,1.2*,336"
+              ColumnSpacing="14">
             <Border Grid.Column="0"
-                    Padding="18"
+                    Padding="16"
                     Background="#F015100E"
                     BorderBrush="#26F0C898"
                     BorderThickness="1"
-                    CornerRadius="28">
+                    CornerRadius="24">
                 <ScrollViewer>
-                    <StackPanel Spacing="14">
+                    <StackPanel Spacing="12">
                         <StackPanel Spacing="4">
                             <TextBlock Text="Agent Workspace"
-                                       FontSize="20"
+                                       FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="#F6EFE7" />
                             <TextBlock Text="Prompt, proposal review, and activity stay visible beside the canvas."
@@ -187,7 +190,7 @@
                                 BorderBrush="#33F0C898"
                                 BorderThickness="1"
                                 CornerRadius="22">
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="8">
                                 <Grid ColumnDefinitions="*,Auto"
                                       ColumnSpacing="12">
                                     <TextBlock Text="Prompt Composer"
@@ -209,7 +212,7 @@
                                            Foreground="#B8A99A"
                                            FontSize="12" />
                                 <TextBox AcceptsReturn="True"
-                                         Height="96"
+                                         Height="80"
                                          Text="{Binding PromptText}"
                                          Watermark="Describe the change you want the planner to propose." />
                                 <Button Content="Plan Proposal"
@@ -222,26 +225,7 @@
                                 BorderBrush="#19FFFFFF"
                                 BorderThickness="1"
                                 CornerRadius="22">
-                            <StackPanel Spacing="10">
-                                <TextBlock Text="Agents + Capability Surface"
-                                           FontSize="16"
-                                           FontWeight="SemiBold"
-                                           Foreground="#F6EFE7" />
-                                <TextBlock Text="{Binding PlannerSurfaceText}"
-                                           Foreground="#9AC5FF"
-                                           FontSize="12" />
-                                <TextBlock Text="{Binding McpSurfaceText}"
-                                           Foreground="#D7CCC2"
-                                           TextWrapping="Wrap"
-                                           FontSize="12" />
-                            </StackPanel>
-                        </Border>
-                        <Border Padding="16"
-                                Background="#B8140F0D"
-                                BorderBrush="#19FFFFFF"
-                                BorderThickness="1"
-                                CornerRadius="22">
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="8">
                                 <TextBlock Text="Proposal Review"
                                            FontSize="16"
                                            FontWeight="SemiBold"
@@ -264,7 +248,8 @@
                                 <TextBlock Text="{Binding ProposalIssueText}"
                                            IsVisible="{Binding HasProposalIssues}"
                                            Foreground="#F0C898"
-                                           TextWrapping="Wrap" />
+                                           TextWrapping="Wrap"
+                                           FontSize="12" />
                                 <StackPanel Orientation="Horizontal"
                                             Spacing="8">
                                     <Button Content="Approve"
@@ -281,7 +266,26 @@
                                 BorderBrush="#19FFFFFF"
                                 BorderThickness="1"
                                 CornerRadius="22">
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Agents + Capability Surface"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Foreground="#F6EFE7" />
+                                <TextBlock Text="{Binding PlannerSurfaceText}"
+                                           Foreground="#9AC5FF"
+                                           FontSize="12" />
+                                <TextBlock Text="{Binding McpSurfaceText}"
+                                           Foreground="#D7CCC2"
+                                           TextWrapping="Wrap"
+                                           FontSize="12" />
+                            </StackPanel>
+                        </Border>
+                        <Border Padding="16"
+                                Background="#B8140F0D"
+                                BorderBrush="#19FFFFFF"
+                                BorderThickness="1"
+                                CornerRadius="22">
+                            <StackPanel Spacing="8">
                                 <TextBlock Text="Activity Timeline"
                                            FontSize="16"
                                            FontWeight="SemiBold"
@@ -290,7 +294,7 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border Margin="0,0,0,10"
-                                                    Padding="12"
+                                                    Padding="10"
                                                     Background="#120E0C"
                                                     BorderBrush="#19FFFFFF"
                                                     BorderThickness="1"
@@ -321,90 +325,111 @@
                 </ScrollViewer>
             </Border>
             <Border Grid.Column="1"
-                    Padding="14"
+                    Padding="12"
                     Background="#F0120F0D"
                     BorderBrush="#19FFFFFF"
                     BorderThickness="1"
                     CornerRadius="30">
                 <Grid RowDefinitions="Auto,*"
-                      RowSpacing="14">
-                    <Border Padding="10"
+                      RowSpacing="12">
+                    <Border Padding="8,9"
                             Background="#B81B1613"
                             BorderBrush="#19FFFFFF"
                             BorderThickness="1"
                             CornerRadius="22">
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto"
-                              ColumnSpacing="8">
-                            <StackPanel Orientation="Horizontal"
-                                        Spacing="8">
-                                <Button Content="Select"
-                                        Tag="Select"
-                                        Click="OnToolClick" />
-                                <Button Content="Pan"
-                                        Tag="Pan"
-                                        Click="OnToolClick" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        Spacing="8">
-                                <Button Content="Rect"
-                                        Tag="CreateRectangle"
-                                        Click="OnToolClick" />
-                                <Button Content="Circle"
-                                        Tag="CreateCircle"
-                                        Click="OnToolClick" />
-                                <Button Content="Line"
-                                        Tag="CreateLine"
-                                        Click="OnToolClick" />
-                                <Button Content="Text"
-                                        Tag="CreateText"
-                                        Click="OnToolClick" />
-                                <Button Content="Image"
-                                        Click="OnImageToolClick" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="2"
-                                        Orientation="Horizontal"
-                                        Spacing="8">
-                                <Button Content="Duplicate" Click="OnDuplicateSelectionClick" />
-                                <Button Content="Delete" Click="OnDeleteSelectionClick" />
-                                <Button Content="Group" Click="OnGroupSelectionClick" />
-                                <Button Content="Ungroup" Click="OnUngroupSelectionClick" />
-                            </StackPanel>
-                            <Border Grid.Column="4"
-                                    Padding="10,6"
-                                    Background="#1D1714"
-                                    BorderBrush="#19FFFFFF"
-                                    BorderThickness="1"
-                                    CornerRadius="999">
-                                <TextBlock Text="{Binding ActiveToolText}"
-                                           Foreground="#F0C898"
-                                           FontSize="11" />
-                            </Border>
-                            <Border Grid.Column="5"
-                                    Padding="10,6"
-                                    Background="#162132"
-                                    BorderBrush="#332D9BF0"
-                                    BorderThickness="1"
-                                    CornerRadius="999">
-                                <TextBlock Text="{Binding SelectionSummaryText}"
-                                           Foreground="#9AC5FF"
-                                           FontSize="11" />
-                            </Border>
-                        </Grid>
+                        <StackPanel Spacing="8">
+                            <WrapPanel Orientation="Horizontal">
+                                <Border Margin="0,0,8,8"
+                                        Padding="8"
+                                        Background="#16110E"
+                                        BorderBrush="#19FFFFFF"
+                                        BorderThickness="1"
+                                        CornerRadius="16">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <Button Content="Select"
+                                                Tag="Select"
+                                                Click="OnToolClick" />
+                                        <Button Content="Pan"
+                                                Tag="Pan"
+                                                Click="OnToolClick" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Margin="0,0,8,8"
+                                        Padding="8"
+                                        Background="#16110E"
+                                        BorderBrush="#19FFFFFF"
+                                        BorderThickness="1"
+                                        CornerRadius="16">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <Button Content="Rect"
+                                                Tag="CreateRectangle"
+                                                Click="OnToolClick" />
+                                        <Button Content="Circle"
+                                                Tag="CreateCircle"
+                                                Click="OnToolClick" />
+                                        <Button Content="Line"
+                                                Tag="CreateLine"
+                                                Click="OnToolClick" />
+                                        <Button Content="Text"
+                                                Tag="CreateText"
+                                                Click="OnToolClick" />
+                                        <Button Content="Image"
+                                                Click="OnImageToolClick" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Margin="0,0,8,8"
+                                        Padding="8"
+                                        Background="#16110E"
+                                        BorderBrush="#19FFFFFF"
+                                        BorderThickness="1"
+                                        CornerRadius="16">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <Button Content="Duplicate" Click="OnDuplicateSelectionClick" />
+                                        <Button Content="Delete" Click="OnDeleteSelectionClick" />
+                                        <Button Content="Group" Click="OnGroupSelectionClick" />
+                                        <Button Content="Ungroup" Click="OnUngroupSelectionClick" />
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <Border Margin="0,0,8,0"
+                                        Padding="10,6"
+                                        Background="#1D1714"
+                                        BorderBrush="#19FFFFFF"
+                                        BorderThickness="1"
+                                        CornerRadius="999">
+                                    <TextBlock Text="{Binding ActiveToolText}"
+                                               Foreground="#F0C898"
+                                               FontSize="11" />
+                                </Border>
+                                <Border Padding="10,6"
+                                        Background="#162132"
+                                        BorderBrush="#332D9BF0"
+                                        BorderThickness="1"
+                                        CornerRadius="999">
+                                    <TextBlock Text="{Binding SelectionSummaryText}"
+                                               Foreground="#9AC5FF"
+                                               FontSize="11" />
+                                </Border>
+                            </WrapPanel>
+                        </StackPanel>
                     </Border>
                     <Border Grid.Row="1"
-                            Padding="22"
+                            Padding="18"
                             Background="#0E0B09"
                             BorderBrush="#19FFFFFF"
                             BorderThickness="1"
-                            CornerRadius="28">
+                            CornerRadius="30">
                         <Grid RowDefinitions="Auto,Auto,*"
-                              RowSpacing="14">
+                              RowSpacing="12">
                             <Grid ColumnDefinitions="*,Auto"
                                   ColumnSpacing="12">
                                 <StackPanel Spacing="4">
                                     <TextBlock Text="Canvas Stage"
-                                               FontSize="20"
+                                               FontSize="22"
                                                FontWeight="SemiBold"
                                                Foreground="#F6EFE7" />
                                     <TextBlock Text="The artboard stays central while review-first agent work remains visible in the shell."
@@ -424,6 +449,7 @@
                                 </Border>
                             </Grid>
                             <Border Grid.Row="1"
+                                    IsVisible="{Binding HasRenderWarnings}"
                                     Padding="12"
                                     Background="#140F0D"
                                     BorderBrush="#19FFFFFF"
@@ -434,11 +460,11 @@
                                            TextWrapping="Wrap" />
                             </Border>
                             <Border Grid.Row="2"
-                                    Padding="18"
+                                    Padding="20"
                                     Background="#181411"
                                     BorderBrush="#26FFFFFF"
                                     BorderThickness="1"
-                                    CornerRadius="28">
+                                    CornerRadius="30">
                                 <controls:WorkspaceCanvasControl />
                             </Border>
                         </Grid>
@@ -446,16 +472,16 @@
                 </Grid>
             </Border>
             <Border Grid.Column="2"
-                    Padding="18"
+                    Padding="16"
                     Background="#F015100E"
                     BorderBrush="#26F0C898"
                     BorderThickness="1"
-                    CornerRadius="28">
+                    CornerRadius="24">
                 <ScrollViewer>
-                    <StackPanel Spacing="14">
+                    <StackPanel Spacing="12">
                         <StackPanel Spacing="4">
                             <TextBlock Text="Inspector"
-                                       FontSize="20"
+                                       FontSize="18"
                                        FontWeight="SemiBold"
                                        Foreground="#F6EFE7" />
                             <TextBlock Text="{Binding AgentContextSummaryText}"
@@ -468,7 +494,7 @@
                                 BorderBrush="#19FFFFFF"
                                 BorderThickness="1"
                                 CornerRadius="22">
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="8">
                                 <TextBlock Text="Design"
                                            FontSize="16"
                                            FontWeight="SemiBold"
@@ -558,7 +584,7 @@
                                 BorderBrush="#19FFFFFF"
                                 BorderThickness="1"
                                 CornerRadius="22">
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="8">
                                 <TextBlock Text="Layers"
                                            FontSize="16"
                                            FontWeight="SemiBold"
@@ -615,7 +641,7 @@
                                 BorderBrush="#19FFFFFF"
                                 BorderThickness="1"
                                 CornerRadius="22">
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="8">
                                 <TextBlock Text="Agent Context"
                                            FontSize="16"
                                            FontWeight="SemiBold"

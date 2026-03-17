@@ -147,6 +147,8 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         private set => SetProperty(ref _renderWarningsText, value);
     }
 
+    public bool HasRenderWarnings => !string.IsNullOrWhiteSpace(RenderWarningsText);
+
     public bool IsDirty => _isDirty;
 
     public bool CanUndo => _history.UndoEntries.Count > 0;
@@ -1470,6 +1472,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             : string.Join(Environment.NewLine, snapshot.Warnings);
 
         OnPropertyChanged(nameof(CanvasBitmap));
+        OnPropertyChanged(nameof(HasRenderWarnings));
     }
 
     private void EnsureViewportInitialized(bool force = false)
