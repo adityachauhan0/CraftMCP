@@ -6,7 +6,9 @@ public sealed record WorkspaceActivityEntry(
     WorkspaceActivitySeverity Severity,
     string? Detail = null,
     string SourceLabel = "System",
-    string? Actor = null)
+    string? Actor = null,
+    string? ScopeLabel = null,
+    string? CorrelationId = null)
 {
     public string TimestampLabel => TimestampUtc.ToLocalTime().ToString("HH:mm:ss");
 
@@ -18,9 +20,15 @@ public sealed record WorkspaceActivityEntry(
     };
 
     public string MetaLabel =>
-        string.IsNullOrWhiteSpace(Actor)
-            ? SourceLabel
-            : $"{SourceLabel} | {Actor}";
+        string.Join(
+            " • ",
+            new[]
+            {
+                SeverityLabel,
+                SourceLabel,
+                Actor,
+                CorrelationId,
+            }.Where(value => !string.IsNullOrWhiteSpace(value)));
 
     public string DetailText => string.IsNullOrWhiteSpace(Detail) ? "No additional detail." : Detail;
 }

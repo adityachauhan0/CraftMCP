@@ -126,6 +126,75 @@ public sealed class WorkspaceViewModelTests
     }
 
     [Fact]
+    public void ShellMessaging_RemainsTruthfulAboutPlannerAndMcpState()
+    {
+        using var viewModel = CreateViewModel();
+
+        Assert.Equal("Planner proposes. You review before apply.", viewModel.PromptExpectationText);
+        Assert.Equal("Local planner only", viewModel.PlannerSurfaceText);
+        Assert.Equal("External MCP execution is not wired in this MVP.", viewModel.McpSurfaceText);
+        Assert.Equal("Document or canvas", viewModel.PromptScopeText);
+        Assert.Equal(
+            "No layer selected. The local planner can review whole-document prompts and canvas background updates.",
+            viewModel.PromptScopeDetailText);
+    }
+
+    [Fact]
+    public void InspectorIntroText_ReflectsWhetherAProposalIsPending()
+    {
+        using var viewModel = CreateViewModel(new ReviewPlanner());
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+
+        Assert.Equal(
+            "Direct edits and layers stay available while review remains explicit.",
+            viewModel.InspectorIntroText);
+        Assert.Equal("No layer selected.", viewModel.AgentContextSelectionText);
+        Assert.Equal(
+            "Select a layer to give the planner object-specific context. Without a selection, the local planner can only handle whole-document or canvas-background prompts.",
+            viewModel.AgentContextSelectionDetailText);
+
+        viewModel.SelectTool(ToolMode.CreateRectangle);
+        viewModel.OnCanvasPointerPressed(new Point(200, 200), KeyModifiers.None, false);
+        viewModel.OnCanvasPointerReleased(new Point(340, 320));
+        viewModel.PromptText = "Hide the selected node.";
+        viewModel.SubmitPrompt();
+
+        Assert.Equal(
+            "Direct edits stay available while the pending proposal remains in review.",
+            viewModel.InspectorIntroText);
+        Assert.Equal("Rectangle 'Rectangle'", viewModel.AgentContextSelectionText);
+        Assert.Equal(
+            "Pending proposal targets this selection and still requires explicit approval before any mutation.",
+            viewModel.AgentContextProposalImpactText);
+        Assert.Equal("Latest agent activity: Agent proposal ready.", viewModel.AgentContextRecentActivityText);
+    }
+
+    [Fact]
+    public void SubmitPrompt_BuildsReadableProposalScopeAndChangeSummary()
+    {
+        using var viewModel = CreateViewModel(new ReviewPlanner());
+        viewModel.SetSurfaceSize(new Size(1200, 800));
+        viewModel.SelectTool(ToolMode.CreateRectangle);
+        viewModel.OnCanvasPointerPressed(new Point(200, 200), KeyModifiers.None, false);
+        viewModel.OnCanvasPointerReleased(new Point(340, 320));
+        viewModel.PromptText = "Hide the selected node.";
+
+        viewModel.SubmitPrompt();
+
+        Assert.Equal("1 selected layer", viewModel.PromptScopeText);
+        Assert.Equal(
+            "Targeting Rectangle 'Rectangle'. The local planner can review hide, show, lock, and unlock requests for this selection.",
+            viewModel.PromptScopeDetailText);
+        Assert.Equal("Affects 1 selected layer", viewModel.ProposalScopeText);
+        Assert.Equal("1 proposed change", viewModel.ProposalChangeCountText);
+        Assert.Equal("Hide Rectangle 'Rectangle'.", viewModel.ProposalChangeSummaryText);
+        Assert.Equal(
+            "Approve applies this batch through the same command history used for direct edits.",
+            viewModel.ProposalReviewHintText);
+        Assert.Equal("Pending proposal • Review before apply", viewModel.PendingProposalBadgeText);
+    }
+
+    [Fact]
     public void RejectProposal_ClearsPendingReviewWithoutMutatingDocument()
     {
         using var viewModel = CreateViewModel(new ReviewPlanner());
@@ -167,6 +236,8 @@ public sealed class WorkspaceViewModelTests
         Assert.True(viewModel.CanUndo);
         Assert.Equal("Agent", viewModel.ActivityEntries[0].SourceLabel);
         Assert.Equal("planner:test", viewModel.ActivityEntries[0].Actor);
+        Assert.Equal("Info • Agent • planner:test • proposal_review", viewModel.ActivityEntries[0].MetaLabel);
+        Assert.Equal("1 selected layer", viewModel.ActivityEntries[0].ScopeLabel);
     }
 
     [Fact]

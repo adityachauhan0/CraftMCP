@@ -198,18 +198,20 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
                 ? "Unsaved changes"
                 : "Ready";
 
-    public string PromptScopeText =>
-        HasMultipleSelection
-            ? $"{_sessionState.Selection.SelectedNodeIds.Count} selected nodes"
-            : HasSingleSelection
-                ? $"Selected layer: {SelectedNode?.Name ?? "Current selection"}"
-                : "Entire document";
+    public string PromptScopeText => DescribeCurrentPromptScope();
 
-    public string PromptExpectationText => "Prompt -> proposal -> review -> apply";
+    public string PromptScopeDetailText => DescribeCurrentPromptScopeDetail();
+
+    public string PromptExpectationText => "Planner proposes. You review before apply.";
 
     public string PlannerSurfaceText => "Local planner only";
 
     public string McpSurfaceText => "External MCP execution is not wired in this MVP.";
+
+    public string InspectorIntroText =>
+        _currentProposal is null
+            ? "Direct edits and layers stay available while review remains explicit."
+            : "Direct edits stay available while the pending proposal remains in review.";
 
     public string AgentContextSummaryText =>
         _currentProposal is null
@@ -217,6 +219,32 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             : _currentProposal.CanApprove
                 ? "This proposal can be approved or rejected before any mutation is applied."
                 : "This proposal needs revision before it can be applied.";
+
+    public string AgentContextSelectionText =>
+        HasMultipleSelection
+            ? $"{_sessionState.Selection.SelectedNodeIds.Count} selected layers"
+            : SelectedNode is null
+                ? "No layer selected."
+                : $"{SelectedNode.Kind} '{SelectedNode.Name}'";
+
+    public string AgentContextSelectionDetailText =>
+        SelectedNode is null
+            ? "Select a layer to give the planner object-specific context. Without a selection, the local planner can only handle whole-document or canvas-background prompts."
+            : $"{SelectedNode.Kind} '{SelectedNode.Name}' is {(SelectedNode.IsVisible ? "visible" : "hidden")} and {(SelectedNode.IsLocked ? "locked" : "unlocked")} in the current workspace state.";
+
+    public string AgentContextProposalImpactText =>
+        _currentProposal is null
+            ? HasSelection
+                ? "No pending proposal is targeting this selection."
+                : "No pending proposal yet. Submit a prompt to review a batch before anything mutates."
+            : ProposalTargetsCurrentSelection()
+                ? "Pending proposal targets this selection and still requires explicit approval before any mutation."
+                : $"Pending proposal is scoped to {ProposalScopeText.ToLowerInvariant()}.";
+
+    public string AgentContextRecentActivityText =>
+        _activityEntries.FirstOrDefault(entry => entry.SourceLabel == "Agent") is { } activity
+            ? $"Latest agent activity: {activity.Summary}"
+            : "No agent activity yet.";
 
     public string CanvasWidthText { get => _canvasWidthText; set => SetProperty(ref _canvasWidthText, value); }
 
@@ -295,6 +323,33 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
     public string ProposalSummaryText => _currentProposal?.Summary ?? "Submit a prompt to review a proposal.";
 
     public string ProposalRationaleText => _currentProposal?.Rationale ?? string.Empty;
+
+    public string ProposalScopeText =>
+        _currentProposal?.Batch is null
+            ? "No pending scope."
+            : DescribeBatchScope(_currentProposal.Batch, "Affects");
+
+    public string ProposalChangeCountText =>
+        _currentProposal?.Batch is null
+            ? "No proposed changes"
+            : FormatChangeCount(_currentProposal.Batch.Commands.Count);
+
+    public string ProposalChangeSummaryText =>
+        _currentProposal?.Batch is null
+            ? "Submit a prompt to review proposed changes."
+            : string.Join(
+                Environment.NewLine,
+                _currentProposal.Batch.Commands.Select(DescribeProposalChange));
+
+    public string ProposalReviewHintText =>
+        _currentProposal is null
+            ? "Planner output stays read-only until you explicitly approve it."
+            : "Approve applies this batch through the same command history used for direct edits.";
+
+    public string PendingProposalBadgeText =>
+        _currentProposal is null
+            ? string.Empty
+            : "Pending proposal • Review before apply";
 
     public string ProposalCommandPreviewText =>
         _currentProposal?.Batch is null
@@ -466,7 +521,9 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             proposal.CanApprove ? WorkspaceActivitySeverity.Info : WorkspaceActivitySeverity.Warning,
             proposal.Summary,
             "Agent",
-            proposal.Batch?.Provenance.Actor ?? "planner:local");
+            proposal.Batch?.Provenance.Actor ?? "planner:local",
+            PromptScopeText,
+            proposal.ProposalId);
     }
 
     public void ApproveProposal()
@@ -492,7 +549,9 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             WorkspaceActivitySeverity.Info,
             _currentProposal.Summary,
             "Agent",
-            _currentProposal.Batch?.Provenance.Actor ?? "planner:local");
+            _currentProposal.Batch?.Provenance.Actor ?? "planner:local",
+            ProposalScopeText.Replace("Affects", string.Empty, StringComparison.Ordinal).Trim(),
+            _currentProposal.ProposalId);
 
         SetCurrentProposal(null);
         StatusMessage = "Proposal rejected.";
@@ -1273,7 +1332,11 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             WorkspaceActivitySeverity.Info,
             dispatch.HistoryEntry?.Batch.Summary ?? successMessage,
             GetSourceLabel(provenance?.Source ?? CommandSource.System),
-            provenance?.Actor);
+            provenance?.Actor,
+            dispatch.HistoryEntry?.Batch is null
+                ? null
+                : DescribeBatchScope(dispatch.HistoryEntry.Batch, leadingVerb: null),
+            provenance?.CorrelationId);
 
         foreach (var warning in dispatch.Result.Warnings)
         {
@@ -1282,7 +1345,11 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
                 WorkspaceActivitySeverity.Warning,
                 warning.Message,
                 GetSourceLabel(provenance?.Source ?? CommandSource.System),
-                provenance?.Actor);
+                provenance?.Actor,
+                dispatch.HistoryEntry?.Batch is null
+                    ? null
+                    : DescribeBatchScope(dispatch.HistoryEntry.Batch, leadingVerb: null),
+                provenance?.CorrelationId);
         }
 
         OnPropertiesChanged(nameof(IsDirty), nameof(DocumentTitle), nameof(CanUndo), nameof(CanRedo));
@@ -1445,7 +1512,11 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             nameof(SelectionSummaryText),
             nameof(ActiveToolText),
             nameof(PromptScopeText),
-            nameof(AgentContextSummaryText));
+            nameof(PromptScopeDetailText),
+            nameof(AgentContextSummaryText),
+            nameof(AgentContextSelectionText),
+            nameof(AgentContextSelectionDetailText),
+            nameof(AgentContextProposalImpactText));
     }
 
     private void RefreshCanvas()
@@ -1507,7 +1578,11 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             nameof(HasMultipleSelection),
             nameof(ActiveToolText),
             nameof(PromptScopeText),
-            nameof(AgentContextSummaryText));
+            nameof(PromptScopeDetailText),
+            nameof(AgentContextSummaryText),
+            nameof(AgentContextSelectionText),
+            nameof(AgentContextSelectionDetailText),
+            nameof(AgentContextProposalImpactText));
     }
 
     private IReadOnlyList<NodeId> GetSiblingIds(NodeId? parentId) =>
@@ -1545,10 +1620,21 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
         WorkspaceActivitySeverity severity,
         string? detail,
         string sourceLabel,
-        string? actor = null) =>
-        _activityEntries.Insert(0, new WorkspaceActivityEntry(DateTimeOffset.UtcNow, summary, severity, detail, sourceLabel, actor));
+        string? actor = null,
+        string? scopeLabel = null,
+        string? correlationId = null)
+    {
+        _activityEntries.Insert(
+            0,
+            new WorkspaceActivityEntry(DateTimeOffset.UtcNow, summary, severity, detail, sourceLabel, actor, scopeLabel, correlationId));
+        OnPropertiesChanged(nameof(AgentContextRecentActivityText));
+    }
 
-    private void ResetActivityEntries() => _activityEntries.Clear();
+    private void ResetActivityEntries()
+    {
+        _activityEntries.Clear();
+        OnPropertiesChanged(nameof(AgentContextRecentActivityText));
+    }
 
     private void SetCurrentProposal(PlannerOutput? proposal)
     {
@@ -1563,11 +1649,117 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IDisposable
             nameof(ProposalStatusText),
             nameof(ProposalSummaryText),
             nameof(ProposalRationaleText),
+            nameof(ProposalScopeText),
+            nameof(ProposalChangeCountText),
+            nameof(ProposalChangeSummaryText),
+            nameof(ProposalReviewHintText),
+            nameof(PendingProposalBadgeText),
             nameof(ProposalCommandPreviewText),
             nameof(ProposalIssueText),
             nameof(WorkspaceStateText),
-            nameof(AgentContextSummaryText));
+            nameof(AgentContextSummaryText),
+            nameof(AgentContextProposalImpactText),
+            nameof(InspectorIntroText));
     }
+
+    private bool ProposalTargetsCurrentSelection()
+    {
+        if (!HasSelection || _currentProposal?.Batch is null)
+        {
+            return false;
+        }
+
+        var selected = _sessionState.Selection.SelectedNodeIds.ToHashSet();
+        return _currentProposal.Batch.Commands
+            .SelectMany(GetCommandTargetNodeIds)
+            .Any(selected.Contains);
+    }
+
+    private string DescribeCurrentPromptScope() =>
+        HasMultipleSelection
+            ? $"{_sessionState.Selection.SelectedNodeIds.Count} selected layers"
+            : HasSingleSelection
+                ? "1 selected layer"
+                : "Document or canvas";
+
+    private string DescribeCurrentPromptScopeDetail()
+    {
+        if (HasMultipleSelection)
+        {
+            return $"Targeting {_sessionState.Selection.SelectedNodeIds.Count} selected layers. The local planner can review hide, show, lock, and unlock requests for this selection.";
+        }
+
+        if (SelectedNode is not null)
+        {
+            return $"Targeting {SelectedNode.Kind} '{SelectedNode.Name}'. The local planner can review hide, show, lock, and unlock requests for this selection.";
+        }
+
+        return "No layer selected. The local planner can review whole-document prompts and canvas background updates.";
+    }
+
+    private string DescribeProposalChange(DesignCommand command) =>
+        command switch
+        {
+            SetVisibilityCommand setVisibility => $"{(setVisibility.IsVisible ? "Show" : "Hide")} {DescribeNodeReference(setVisibility.NodeId)}.",
+            SetLockStateCommand setLockState => $"{(setLockState.IsLocked ? "Lock" : "Unlock")} {DescribeNodeReference(setLockState.NodeId)}.",
+            SetCanvasCommand setCanvas => $"Update canvas background to {FormatColor(setCanvas.Canvas.Background)}.",
+            CreateNodeCommand createNode => $"Create {createNode.Node.Kind} '{createNode.Node.Name}'.",
+            UpdateNodeCommand updateNode => $"Update {updateNode.Node.Kind} '{updateNode.Node.Name}'.",
+            DeleteNodeCommand deleteNode => $"Delete {DescribeNodeReference(deleteNode.NodeId)}.",
+            ReorderNodeCommand reorderNode => $"Reorder {DescribeNodeReference(reorderNode.NodeId)}.",
+            GroupNodesCommand groupNodes => $"Group nodes into '{groupNodes.Group.Name}'.",
+            UngroupNodeCommand ungroupNode => $"Ungroup {DescribeNodeReference(ungroupNode.GroupId)}.",
+            ImportAssetCommand importAsset => $"Import asset '{importAsset.Asset.FileName}'.",
+            RemoveAssetCommand removeAsset => $"Remove asset '{removeAsset.AssetId.Value}'.",
+            DuplicateNodeCommand duplicateNode => $"Duplicate {DescribeNodeReference(duplicateNode.SourceNodeId)}.",
+            _ => DescribeCommand(command),
+        };
+
+    private string DescribeNodeReference(NodeId nodeId) =>
+        _document.Nodes.TryGetValue(nodeId, out var node)
+            ? $"{node.Kind} '{node.Name}'"
+            : $"layer '{nodeId.Value}'";
+
+    private string DescribeBatchScope(CommandBatch batch, string? leadingVerb)
+    {
+        var targetNodeIds = batch.Commands
+            .SelectMany(GetCommandTargetNodeIds)
+            .Distinct()
+            .ToArray();
+
+        string scope = targetNodeIds.Length switch
+        {
+            0 when batch.Commands.Any(command => command is SetCanvasCommand) => "canvas",
+            1 => "1 selected layer",
+            > 1 => $"{targetNodeIds.Length} selected layers",
+            _ => "document",
+        };
+
+        if (string.IsNullOrWhiteSpace(leadingVerb))
+        {
+            return char.ToUpperInvariant(scope[0]) + scope[1..];
+        }
+
+        return $"{leadingVerb} {scope}";
+    }
+
+    private static string FormatChangeCount(int changeCount) =>
+        changeCount == 1 ? "1 proposed change" : $"{changeCount} proposed changes";
+
+    private static IEnumerable<NodeId> GetCommandTargetNodeIds(DesignCommand command) =>
+        command switch
+        {
+            SetVisibilityCommand setVisibility => [setVisibility.NodeId],
+            SetLockStateCommand setLockState => [setLockState.NodeId],
+            UpdateNodeCommand updateNode => [updateNode.Node.Id],
+            CreateNodeCommand createNode => [createNode.Node.Id],
+            DeleteNodeCommand deleteNode => [deleteNode.NodeId],
+            ReorderNodeCommand reorderNode => [reorderNode.NodeId],
+            GroupNodesCommand groupNodes => groupNodes.Group.ChildNodeIds.Concat([groupNodes.Group.Id]),
+            UngroupNodeCommand ungroupNode => [ungroupNode.GroupId],
+            DuplicateNodeCommand duplicateNode => [duplicateNode.SourceNodeId],
+            _ => Array.Empty<NodeId>(),
+        };
 
     private static string GetSourceLabel(CommandSource source) =>
         source switch
